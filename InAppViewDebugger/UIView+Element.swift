@@ -20,10 +20,8 @@ extension UIView: Element {
         return InAppViewDebugger.snapshotView(self)
     }
 
-    public func enumerateChildren(_ block: (Element) -> Void) {
-        for view in subviews {
-            block(view)
-        }
+    public var children: AnySequence<Element> {
+        return AnySequence(subviews)
     }
 }
 

@@ -50,7 +50,7 @@ public func nodeForElement(element: Element, parentElement: Element?, rootNode: 
     
     var frames = [CGRect]()
     var maxChildDepth = depth
-    element.enumerateChildren { child in
+    element.children.forEach { child in
         var childDepth: Int
         // Children that intersect a sibling should be rendered in
         // a separate layer, above the previous siblings.

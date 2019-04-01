@@ -22,9 +22,6 @@ public protocol Element {
     /// Returns a snapshot of the element in its current state.
     var snapshot: CGImage? { get }
 
-    /// Enumerates the receiver's child elements (shallow traversal)
-    /// and calls the specified block for each child.
-    ///
-    /// - Parameter block: The block to call for each child.
-    func enumerateChildren(_ block: (Element) -> Void)
+    /// Returns a sequence of the children of the element.
+    var children: AnySequence<Element> { get }
 }
