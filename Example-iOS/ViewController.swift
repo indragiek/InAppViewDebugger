@@ -69,10 +69,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func snapshot(sender: UIBarButtonItem) {
-        var depth = 0
-        let rootNode = SCNNode()
-        let node = nodeForElement(element: view!.window!, parentElement: nil, rootNode: rootNode, parentNode: rootNode, depth: &depth, zSpacing: 40)!
-        let viewController = SnapshotViewController(node: node)
+        let viewController = SnapshotViewController(snapshot: Snapshot(element: view!.window!))
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

@@ -23,7 +23,7 @@ public protocol Element {
     var isHidden: Bool { get }
     
     /// Returns a snapshot of the element in its current state.
-    var snapshot: CGImage? { get }
+    var snapshotImage: CGImage? { get }
 
     /// Returns a sequence of the children of the element.
     var children: AnySequence<Element> { get }

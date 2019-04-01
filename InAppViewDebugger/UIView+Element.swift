@@ -20,7 +20,7 @@ extension UIView: Element {
         return nil
     }
     
-    public var snapshot: CGImage? {
+    public var snapshotImage: CGImage? {
         return InAppViewDebugger.snapshotView(self)
     }
 
