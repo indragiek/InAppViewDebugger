@@ -9,6 +9,13 @@
 import UIKit
 import SceneKit
 
+let borderColor = UIColor.darkGray
+let headerVerticalInset: CGFloat = 8.0
+let headerColor = UIColor.darkGray
+let headerCornerRadius: CGFloat = 8.0
+let headerFont = UIFont.boldSystemFont(ofSize: 13)
+let headerOpacity: CGFloat = 0.8
+
 public func nodeForElement(element: Element, parentElement: Element?, rootNode: SCNNode, parentNode: SCNNode?, depth: inout Int, zSpacing: CGFloat) -> SCNNode? {
     // Ignore elements that are not visible. These should appear in
     // the tree view, but not in the 3D view.
@@ -17,17 +24,7 @@ public func nodeForElement(element: Element, parentElement: Element?, rootNode: 
     }
     
     // Create a node whose contents are the snapshot of the element.
-    let path = UIBezierPath(rect: CGRect(origin: .zero, size: element.frame.size))
-    let shape = SCNShape(path: path, extrusionDepth: 0.0)
-    let material = SCNMaterial()
-    material.isDoubleSided = true
-    if let snapshot = element.snapshot {
-        material.diffuse.contents = snapshot
-    } else {
-        material.diffuse.contents = UIColor.white
-    }
-    shape.insertMaterial(material, at: 0)
-    let node = SCNNode(geometry: shape)
+    let node = SCNNode(geometry: snapshotShape(element: element))
     parentNode?.addChildNode(node)
     
     // The z-coordinate is calculated by multiplying the specified
@@ -67,11 +64,74 @@ public func nodeForElement(element: Element, parentElement: Element?, rootNode: 
         }
     }
     depth = maxChildDepth
-    addBorder(node: node, color: .white)
+    addBorder(node: node, color: borderColor)
+    
+    if let headerNode = nameHeaderNode(element: element, associatedSnapshotNode: node) {
+        parentNode?.addChildNode(headerNode)
+    }
+    
     return node
 }
 
-fileprivate func lineFrom(vertex1: SCNVector3, vertex2: SCNVector3, color: UIColor) -> SCNNode
+fileprivate func nameHeaderNode(element: Element, associatedSnapshotNode: SCNNode) -> SCNNode? {
+    guard let text = nameTextGeometry(element: element) else {
+        return nil
+    }
+    
+    let textNode = SCNNode(geometry: text)
+    let (min, max) = textNode.boundingBox
+    let textWidth = max.x - min.x
+    let textHeight = max.y - min.y
+    
+    let frame = CGRect(x: 0.0, y: 0.0, width: element.frame.width, height: CGFloat(textHeight) + (headerVerticalInset * 2.0))
+    let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame))
+    
+    textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), 0.5)
+    headerNode.addChildNode(textNode)
+    
+    let snapshotPosition = associatedSnapshotNode.position
+    headerNode.position = SCNVector3(snapshotPosition.x, snapshotPosition.y + Float(element.frame.height), associatedSnapshotNode.position.z + 0.5)
+    headerNode.opacity = headerOpacity
+    return headerNode
+}
+
+fileprivate func nameHeaderShape(frame: CGRect) -> SCNShape {
+    let path = UIBezierPath(roundedRect: frame, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: headerCornerRadius, height: headerCornerRadius))
+    let shape = SCNShape(path: path, extrusionDepth: 0.0)
+    let material = SCNMaterial()
+    material.isDoubleSided = true
+    material.diffuse.contents = headerColor
+    shape.insertMaterial(material, at: 0)
+    return shape
+}
+
+fileprivate func nameTextGeometry(element: Element) -> SCNText? {
+    guard let name = element.viewDebuggerName else {
+        return nil
+    }
+    let text = SCNText()
+    text.string = name
+    text.font = headerFont
+    text.alignmentMode = CATextLayerAlignmentMode.center.rawValue
+    text.truncationMode = CATextLayerTruncationMode.end.rawValue
+    return text
+}
+
+fileprivate func snapshotShape(element: Element) -> SCNShape {
+    let path = UIBezierPath(rect: CGRect(origin: .zero, size: element.frame.size))
+    let shape = SCNShape(path: path, extrusionDepth: 0.0)
+    let material = SCNMaterial()
+    material.isDoubleSided = true
+    if let snapshot = element.snapshot {
+        material.diffuse.contents = snapshot
+    } else {
+        material.diffuse.contents = UIColor.white
+    }
+    shape.insertMaterial(material, at: 0)
+    return shape
+}
+
+fileprivate func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, color: UIColor) -> SCNNode
 {
     let indices: [Int32] = [0, 1]
     let source = SCNGeometrySource(vertices: [vertex1, vertex2])
@@ -98,16 +158,16 @@ fileprivate func addBorder(node: SCNNode, color: UIColor) {
     let topRight = SCNVector3(max.x, max.y, z)
     let bottomRight = SCNVector3(max.x, min.y, z)
     
-    let bottom = lineFrom(vertex1: bottomLeft, vertex2: bottomRight, color: color)
+    let bottom = lineFrom(vertex: bottomLeft, toVertex: bottomRight, color: color)
     node.addChildNode(bottom)
     
-    let left = lineFrom(vertex1: bottomLeft, vertex2: topLeft, color: color)
+    let left = lineFrom(vertex: bottomLeft, toVertex: topLeft, color: color)
     node.addChildNode(left)
     
-    let right = lineFrom(vertex1: bottomRight, vertex2: topRight, color: color)
+    let right = lineFrom(vertex: bottomRight, toVertex: topRight, color: color)
     node.addChildNode(right)
     
-    let top = lineFrom(vertex1: topLeft, vertex2: topRight, color: color)
+    let top = lineFrom(vertex: topLeft, toVertex: topRight, color: color)
     node.addChildNode(top)
 }
 
@@ -133,7 +193,7 @@ public class SnapshotViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         let scene = SCNScene()
-        scene.background.contents = UIColor(red:0.251, green:0.251, blue:0.251, alpha:1.000)
+        scene.background.contents = UIColor.white
         scene.rootNode.addChildNode(node)
         sceneView?.scene = scene
         sceneView?.allowsCameraControl = true

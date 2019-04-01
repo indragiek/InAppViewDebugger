@@ -10,6 +10,10 @@ import UIKit
 
 extension UIView: Element {
     public var name: String? {
+        return String(describing: type(of: self))
+    }
+    
+    public var viewDebuggerName: String? {
         if let viewController = getViewController(view: self) {
             return "\(String(describing: type(of: viewController))) (\(String(describing: type(of: self))))"
         }

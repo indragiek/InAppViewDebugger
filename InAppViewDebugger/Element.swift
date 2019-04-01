@@ -10,8 +10,11 @@ import CoreGraphics
 
 /// A UI element that can be snapshotted.
 public protocol Element {
-    /// The name of the element, to be displayed above its contents.
+    /// The name of the element, to be displayed in the hierarchy view.
     var name: String? { get }
+    
+    /// The name of the element, to be displayed in the view debugger.
+    var viewDebuggerName: String? { get }
     
     /// Returns the frame of the element on screen.
     var frame: CGRect { get }
