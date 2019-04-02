@@ -65,12 +65,15 @@ class SnapshotView: UIView {
 
 private struct SnapshotNodes {
     let snapshot: Snapshot
+    let depth: Int
+    
     weak var snapshotNode: SCNNode?
     weak var headerNode: SCNNode?
     weak var borderNode: SCNNode?
     
-    init(snapshot: Snapshot) {
+    init(snapshot: Snapshot, depth: Int) {
         self.snapshot = snapshot
+        self.depth = depth
     }
 }
 
@@ -86,7 +89,7 @@ private func snapshotNode(snapshot: Snapshot,
     if snapshot.isHidden || snapshot.frame.size == .zero {
         return nil
     }
-    var nodes = SnapshotNodes(snapshot: snapshot)
+    var nodes = SnapshotNodes(snapshot: snapshot, depth: depth)
     
     // Create a node whose contents are the snapshot of the element.
     let node = SCNNode(geometry: snapshotShape(snapshot: snapshot))
