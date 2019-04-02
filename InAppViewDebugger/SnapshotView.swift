@@ -413,17 +413,19 @@ private func headerNode(snapshot: Snapshot,
     }
     
     let textNode = SCNNode(geometry: text)
-    let (min, max) = textNode.boundingBox
-    let textWidth = max.x - min.x
-    let textHeight = max.y - min.y
+    let (textMin, textMax) = textNode.boundingBox
+    let textWidth = textMax.x - textMin.x
+    let textHeight = textMax.y - textMin.y
     
-    let frame = CGRect(x: 0.0, y: 0.0, width: snapshot.frame.width, height: CGFloat(textHeight) + (attributes.verticalInset * 2.0))
+    let snapshotWidth = snapshot.frame.width
+    let headerWidth = max(snapshotWidth, CGFloat(textWidth))
+    let frame = CGRect(x: 0.0, y: 0.0, width: headerWidth, height: CGFloat(textHeight) + (attributes.verticalInset * 2.0))
     let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame, color: attributes.color, cornerRadius: attributes.cornerRadius))
     
     textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), smallZOffset)
     headerNode.addChildNode(textNode)
     
-    headerNode.position = SCNVector3(0.0, Float(snapshot.frame.height), smallZOffset)
+    headerNode.position = SCNVector3((snapshotWidth / 2.0) - (headerWidth / 2.0), (snapshot.frame.height), CGFloat(smallZOffset))
     headerNode.opacity = attributes.opacity
     return headerNode
 }
