@@ -156,6 +156,9 @@ class SnapshotView: UIView {
     
     private func highlight(snapshotNode: SCNNode?) {
         if let previousNodes = highlightedNodes {
+            if snapshotNode == previousNodes.snapshotNode {
+                return
+            }
             previousNodes.highlightNode?.removeFromParentNode()
             previousNodes.highlightNode = nil
             
