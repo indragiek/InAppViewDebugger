@@ -6,8 +6,11 @@
 //  Copyright © 2019 Indragie Karunaratne. All rights reserved.
 //
 
+import Foundation
+
 /// A snapshot of the UI element tree in its current state.
 public struct Snapshot {
+    public let identifier = UUID().uuidString
     public let label: ElementLabel
     public let frame: CGRect
     public let isHidden: Bool

@@ -15,7 +15,7 @@ class SnapshotView: UIView {
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
     private let sceneView: SCNView
-    private let nodeToSnapshotMap = NSMapTable<SCNNode, Box<Snapshot>>.weakToStrongObjects()
+    private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
     
     public init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.configuration = configuration
@@ -34,7 +34,7 @@ class SnapshotView: UIView {
                          rootNode: scene.rootNode,
                          parentNode: scene.rootNode,
                          depth: &depth,
-                         nodeToSnapshotMap: nodeToSnapshotMap,
+                         snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
                          configuration: configuration)
         sceneView.scene = scene
         sceneView.allowsCameraControl = true
@@ -63,10 +63,15 @@ class SnapshotView: UIView {
     }
 }
 
-private struct NodeIdentifiers {
-    static let snapshot = "snapshot"
-    static let border = "border"
-    static let header = "header"
+private struct SnapshotNodes {
+    let snapshot: Snapshot
+    weak var snapshotNode: SCNNode?
+    weak var headerNode: SCNNode?
+    weak var borderNode: SCNNode?
+    
+    init(snapshot: Snapshot) {
+        self.snapshot = snapshot
+    }
 }
 
 private func snapshotNode(snapshot: Snapshot,
@@ -74,19 +79,19 @@ private func snapshotNode(snapshot: Snapshot,
                           rootNode: SCNNode,
                           parentNode: SCNNode?,
                           depth: inout Int,
-                          nodeToSnapshotMap: NSMapTable<SCNNode, Box<Snapshot>>,
+                          snapshotIdentifierToNodesMap: inout [String: SnapshotNodes],
                           configuration: SnapshotViewConfiguration) -> SCNNode? {
     // Ignore elements that are not visible. These should appear in
     // the tree view, but not in the 3D view.
     if snapshot.isHidden || snapshot.frame.size == .zero {
         return nil
     }
-    let boxedSnapshot = Box(snapshot)
+    var nodes = SnapshotNodes(snapshot: snapshot)
     
     // Create a node whose contents are the snapshot of the element.
     let node = SCNNode(geometry: snapshotShape(snapshot: snapshot))
-    node.name = NodeIdentifiers.snapshot
-    nodeToSnapshotMap.setObject(boxedSnapshot, forKey: node)
+    node.name = snapshot.identifier
+    nodes.snapshotNode = node
     
     // The node must be added to the parent node for the coordinate
     // space calculations below to work.
@@ -118,16 +123,20 @@ private func snapshotNode(snapshot: Snapshot,
         headerAttributes = configuration.importantHeaderAttributes
     }
     
-    for borderNode in borderNodes(node: node, color: headerAttributes.color) {
-        node.addChildNode(borderNode)
+    let border = borderNode(node: node, color: headerAttributes.color)
+    border.name = snapshot.identifier
+    node.addChildNode(border)
+    nodes.borderNode = border
+    
+    if let header = headerNode(snapshot: snapshot,
+                               associatedSnapshotNode: node,
+                               attributes: headerAttributes) {
+        header.name = snapshot.identifier
+        parentNode?.addChildNode(header)
+        nodes.headerNode = header
     }
     
-    if let headerNode = headerNode(snapshot: snapshot,
-                                   associatedSnapshotNode: node,
-                                   attributes: headerAttributes) {
-        parentNode?.addChildNode(headerNode)
-        nodeToSnapshotMap.setObject(boxedSnapshot, forKey: headerNode)
-    }
+    snapshotIdentifierToNodesMap[snapshot.identifier] = nodes
     
     var frames = [CGRect]()
     var maxChildDepth = depth
@@ -146,7 +155,7 @@ private func snapshotNode(snapshot: Snapshot,
                                         rootNode: rootNode,
                                         parentNode: node,
                                         depth: &childDepth,
-                                        nodeToSnapshotMap: nodeToSnapshotMap,
+                                        snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
                                         configuration: configuration) {
             maxChildDepth = max(maxChildDepth, childDepth)
             frames.append(child.frame)
@@ -190,7 +199,7 @@ private func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, 
 
 /// Returns an array of nodes that can be used to render a colored
 /// border around the specified node.
-private func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
+private func borderNode(node: SCNNode, color: UIColor) -> SCNNode {
     let (min, max) = node.boundingBox;
     
     // This value is chosen so that the border visually appears on
@@ -207,9 +216,12 @@ private func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
     let right = lineFrom(vertex: bottomRight, toVertex: topRight, color: color)
     let top = lineFrom(vertex: topLeft, toVertex: topRight, color: color)
     
-    let nodes = [bottom, left, right, top]
-    nodes.forEach { $0.name = NodeIdentifiers.border }
-    return nodes
+    let border = SCNNode()
+    border.addChildNode(bottom)
+    border.addChildNode(left)
+    border.addChildNode(right)
+    border.addChildNode(top)
+    return border
 }
 
 /// Returns a node that renders a header above a snapshot node.
@@ -222,8 +234,6 @@ private func headerNode(snapshot: Snapshot,
     }
     
     let textNode = SCNNode(geometry: text)
-    textNode.name = NodeIdentifiers.header
-    
     let (min, max) = textNode.boundingBox
     let textWidth = max.x - min.x
     let textHeight = max.y - min.y
@@ -237,7 +247,6 @@ private func headerNode(snapshot: Snapshot,
     let snapshotPosition = associatedSnapshotNode.position
     headerNode.position = SCNVector3(snapshotPosition.x, snapshotPosition.y + Float(snapshot.frame.height), associatedSnapshotNode.position.z + 0.5)
     headerNode.opacity = attributes.opacity
-    headerNode.name = NodeIdentifiers.header
     return headerNode
 }
 

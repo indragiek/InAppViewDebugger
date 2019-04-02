@@ -21,7 +21,6 @@
 		034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4B82251E8D800953FC3 /* Snapshot.swift */; };
 		034CC4BB2251EA0000953FC3 /* SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BA2251EA0000953FC3 /* SnapshotView.swift */; };
 		034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */; };
-		034CC4BF22520F9500953FC3 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BE22520F9500953FC3 /* Box.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,7 +64,6 @@
 		034CC4B82251E8D800953FC3 /* Snapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		034CC4BA2251EA0000953FC3 /* SnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotView.swift; sourceTree = "<group>"; };
 		034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotViewConfiguration.swift; sourceTree = "<group>"; };
-		034CC4BE22520F9500953FC3 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +114,6 @@
 				034CC4BA2251EA0000953FC3 /* SnapshotView.swift */,
 				034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */,
 				034CC4992251A22200953FC3 /* SnapshotViewController.swift */,
-				034CC4BE22520F9500953FC3 /* Box.swift */,
 			);
 			path = InAppViewDebugger;
 			sourceTree = "<group>";
@@ -249,7 +246,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				034CC4BB2251EA0000953FC3 /* SnapshotView.swift in Sources */,
-				034CC4BF22520F9500953FC3 /* Box.swift in Sources */,
 				034CC49A2251A22200953FC3 /* Element.swift in Sources */,
 				034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */,
 				034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */,
