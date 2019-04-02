@@ -158,7 +158,9 @@ class SnapshotView: UIView {
         if let previousNodes = highlightedNodes {
             previousNodes.highlightNode?.removeFromParentNode()
             previousNodes.highlightNode = nil
+            
             delegate?.snapshotView(self, didDeselectElement: previousNodes.snapshot.element)
+            highlightedNodes = nil
         }
         
         guard let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] else {
