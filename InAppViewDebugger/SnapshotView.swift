@@ -439,10 +439,10 @@ private func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, 
 /// border around the specified node.
 private func borderNode(node: SCNNode, color: UIColor) -> SCNNode {
     let (min, max) = node.boundingBox;
-    let topLeft = SCNVector3(min.x, max.y, smallZOffset)
-    let bottomLeft = SCNVector3(min.x, min.y, smallZOffset)
-    let topRight = SCNVector3(max.x, max.y, smallZOffset)
-    let bottomRight = SCNVector3(max.x, min.y, smallZOffset)
+    let topLeft = SCNVector3(x: min.x, y: max.y, z: smallZOffset)
+    let bottomLeft = SCNVector3(x: min.x, y: min.y, z: smallZOffset)
+    let topRight = SCNVector3(x: max.x, y: max.y, z: smallZOffset)
+    let bottomRight = SCNVector3(x: max.x, y: min.y, z: smallZOffset)
     
     let bottom = lineFrom(vertex: bottomLeft, toVertex: bottomRight, color: color)
     let left = lineFrom(vertex: bottomLeft, toVertex: topLeft, color: color)
@@ -475,10 +475,18 @@ private func headerNode(snapshot: Snapshot,
     let frame = CGRect(x: 0.0, y: 0.0, width: headerWidth, height: CGFloat(textHeight) + (attributes.verticalInset * 2.0))
     let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame, color: attributes.color, cornerRadius: attributes.cornerRadius))
     
-    textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), smallZOffset)
+    textNode.position = SCNVector3(
+        x: (Float(frame.width) / 2.0) - (textWidth / 2.0),
+        y: (Float(frame.height) / 2.0) - (textHeight / 2.0),
+        z: smallZOffset
+    )
     headerNode.addChildNode(textNode)
     
-    headerNode.position = SCNVector3((snapshotWidth / 2.0) - (headerWidth / 2.0), (snapshot.frame.height), CGFloat(smallZOffset))
+    headerNode.position = SCNVector3(
+        x: Float((snapshotWidth / 2.0) - (headerWidth / 2.0)),
+        y: Float(snapshot.frame.height),
+        z: smallZOffset
+    )
     return headerNode
 }
 
