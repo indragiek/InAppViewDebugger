@@ -16,7 +16,7 @@ public struct Snapshot {
     public let isHidden: Bool
     public let snapshotImage: CGImage?
     public let children: [Snapshot]
-    private let element: Element
+    public let element: Element
     
     public init(element: Element) {
         self.element = element

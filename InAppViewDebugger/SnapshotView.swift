@@ -9,12 +9,23 @@
 import UIKit
 import SceneKit
 
+protocol SnapshotViewDelegate: AnyObject {
+    /// Called when an element is select by tapping on it.
+    func snapshotView(_ snapshotView: SnapshotView, didSelectElement element: Element)
+    
+    /// Called when an element is deselected by tapping on a different element or when
+    /// tapping outside the interactive area.
+    func snapshotView(_ snapshotView: SnapshotView, didDeselectElement element: Element)
+}
+
 /// A view that renders an interactive 3D representation of a UI element
 /// hierarchy snapshot.
 class SnapshotView: UIView {
     struct LayoutConstants {
         static let spacingSliderHorizontalInset: CGFloat = 10.0
     }
+    
+    public weak var delegate: SnapshotViewDelegate?
     
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
@@ -144,8 +155,11 @@ class SnapshotView: UIView {
     }
     
     private func highlight(snapshotNode: SCNNode?) {
-        highlightedNodes?.highlightNode?.removeFromParentNode()
-        highlightedNodes?.highlightNode = nil
+        if let previousNodes = highlightedNodes {
+            previousNodes.highlightNode?.removeFromParentNode()
+            previousNodes.highlightNode = nil
+            delegate?.snapshotView(self, didDeselectElement: previousNodes.snapshot.element)
+        }
         
         guard let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] else {
             return
@@ -155,6 +169,7 @@ class SnapshotView: UIView {
         nodes.snapshotNode?.addChildNode(highlight)
         nodes.highlightNode = highlight
         highlightedNodes = nodes
+        delegate?.snapshotView(self, didSelectElement: nodes.snapshot.element)
     }
     
     @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
