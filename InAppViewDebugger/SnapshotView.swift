@@ -119,7 +119,7 @@ class SnapshotView: UIView {
     
     // MARK: Actions
     
-    @objc func handleTap(sender: UITapGestureRecognizer) {
+    @objc private func handleTap(sender: UITapGestureRecognizer) {
         guard sender.state == .ended else {
             return
         }
@@ -134,7 +134,7 @@ class SnapshotView: UIView {
         }
     }
     
-    @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
+    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
         }
@@ -175,7 +175,7 @@ class SnapshotView: UIView {
         ]
     }
     
-    @objc func showHideHeaderNodes(sender: UIMenuItem) {
+    @objc private func showHideHeaderNodes(sender: UIMenuItem) {
         hideHeaderNodes = !hideHeaderNodes
         
         for (_, nodes) in snapshotIdentifierToNodesMap {
@@ -183,7 +183,7 @@ class SnapshotView: UIView {
         }
     }
     
-    @objc func showHideBorderNodes(sender: UIMenuItem) {
+    @objc private func showHideBorderNodes(sender: UIMenuItem) {
         hideBorderNodes = !hideBorderNodes
         
         for (_, nodes) in snapshotIdentifierToNodesMap {
@@ -191,7 +191,7 @@ class SnapshotView: UIView {
         }
     }
     
-    @objc func handleSpacingSliderChanged(sender: UISlider) {
+    @objc private func handleSpacingSliderChanged(sender: UISlider) {
         if shouldHideHeaderNodes(zSpacing: sender.value) {
             hideHeaderNodes = true
         }
@@ -212,11 +212,11 @@ class SnapshotView: UIView {
     
     // MARK: Notifications
     
-    @objc func didShowMenuItem(notification: Notification) {
+    @objc private func didShowMenuItem(notification: Notification) {
         menuVisible = true
     }
     
-    @objc func didHideMenuItem(notification: Notification) {
+    @objc private func didHideMenuItem(notification: Notification) {
         menuVisible = false
     }
 }
