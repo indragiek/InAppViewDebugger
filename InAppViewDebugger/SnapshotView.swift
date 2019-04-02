@@ -127,13 +127,11 @@ private func snapshotNode(snapshot: Snapshot,
     }
     
     let border = borderNode(node: node, color: headerAttributes.color)
-    border.name = snapshot.identifier
     node.addChildNode(border)
     nodes.borderNode = border
     
     if let header = headerNode(snapshot: snapshot,
                                attributes: headerAttributes) {
-        header.name = snapshot.identifier
         node.addChildNode(header)
         nodes.headerNode = header
     }
