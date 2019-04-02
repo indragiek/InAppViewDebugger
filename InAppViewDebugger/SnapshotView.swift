@@ -15,16 +15,23 @@ class SnapshotView: UIView {
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
     private let sceneView: SCNView
-    private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
+    private let spacingSlider: UISlider
+    private var snapshotIdentifierToNodesMap = [String: Nodes]()
     
     public init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.configuration = configuration
         self.snapshot = snapshot
         sceneView = SCNView()
+        spacingSlider = UISlider()
         
         super.init(frame: .zero)
-        addSubview(sceneView)
         
+        configureSceneView()
+        configureSpacingSlider()
+        configureTapGestureRecognizer()
+    }
+    
+    private func configureSceneView() {
         let scene = SCNScene()
         scene.background.contents = configuration.backgroundColor
         
@@ -32,13 +39,25 @@ class SnapshotView: UIView {
         _ = snapshotNode(snapshot: snapshot,
                          parentSnapshot: nil,
                          rootNode: scene.rootNode,
-                         parentNode: scene.rootNode,
+                         parentSnapshotNode: nil,
                          depth: &depth,
                          snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
                          configuration: configuration)
         sceneView.scene = scene
         sceneView.allowsCameraControl = true
-        
+        addSubview(sceneView)
+    }
+    
+    private func configureSpacingSlider() {
+        spacingSlider.minimumValue = configuration.minimumZSpacing
+        spacingSlider.maximumValue = configuration.maximumZSpacing
+        spacingSlider.isContinuous = true
+        spacingSlider.addTarget(self, action: #selector(handleSpacingSliderChanged(sender:)), for: .valueChanged)
+        spacingSlider.setValue(configuration.zSpacing, animated: false)
+        addSubview(spacingSlider)
+    }
+    
+    private func configureTapGestureRecognizer() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(sender:)))
         addGestureRecognizer(tapGestureRecognizer)
     }
@@ -50,7 +69,18 @@ class SnapshotView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         sceneView.frame = bounds
+        
+        let sliderSize = spacingSlider.sizeThatFits(bounds.size)
+        let safeAreaInsets = self.safeAreaInsets
+        spacingSlider.frame = CGRect(
+            x: safeAreaInsets.left,
+            y: bounds.maxY - sliderSize.height - safeAreaInsets.bottom,
+            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
+            height: sliderSize.height
+        )
     }
+    
+    // MARK: Actions
     
     @objc func handleTap(sender: UITapGestureRecognizer) {
         if sender.state == .ended {
@@ -61,9 +91,20 @@ class SnapshotView: UIView {
             }
         }
     }
+    
+    @objc func handleSpacingSliderChanged(sender: UISlider) {
+        for (_, nodes) in snapshotIdentifierToNodesMap {
+            guard let snapshotNode = nodes.snapshotNode else {
+                continue
+            }
+            var position = snapshotNode.position
+            position.z = sender.value * Float(nodes.depth)
+            snapshotNode.position = position
+        }
+    }
 }
 
-private struct SnapshotNodes {
+private struct Nodes {
     let snapshot: Snapshot
     let depth: Int
     
@@ -80,25 +121,25 @@ private struct SnapshotNodes {
 private func snapshotNode(snapshot: Snapshot,
                           parentSnapshot: Snapshot?,
                           rootNode: SCNNode,
-                          parentNode: SCNNode?,
+                          parentSnapshotNode: SCNNode?,
                           depth: inout Int,
-                          snapshotIdentifierToNodesMap: inout [String: SnapshotNodes],
+                          snapshotIdentifierToNodesMap: inout [String: Nodes],
                           configuration: SnapshotViewConfiguration) -> SCNNode? {
     // Ignore elements that are not visible. These should appear in
     // the tree view, but not in the 3D view.
     if snapshot.isHidden || snapshot.frame.size == .zero {
         return nil
     }
-    var nodes = SnapshotNodes(snapshot: snapshot, depth: depth)
-    
     // Create a node whose contents are the snapshot of the element.
     let node = SCNNode(geometry: snapshotShape(snapshot: snapshot))
     node.name = snapshot.identifier
+    
+    var nodes = Nodes(snapshot: snapshot, depth: depth)
     nodes.snapshotNode = node
     
-    // The node must be added to the parent node for the coordinate
+    // The node must be added to the root node for the coordinate
     // space calculations below to work.
-    parentNode?.addChildNode(node)
+    rootNode.addChildNode(node)
     
     // Flip the y-coordinate since the SceneKit coordinate system has
     // a flipped version of the UIKit coordinate system.
@@ -108,8 +149,27 @@ private func snapshotNode(snapshot: Snapshot,
     } else {
         y = 0.0
     }
-    let z = calculateZPosition(depth: depth, spacing: configuration.zSpacing, node: node, rootNode: rootNode)
-    node.position = SCNVector3(snapshot.frame.origin.x, y, CGFloat(z))
+    
+    // To simplify calculating the z-axis spacing between the layers, we
+    // make each snapshot node a direct child of the root rather than embedding
+    // the nodes in their parent nodes in the same structure as the UI elements
+    // themselves. With this flattened hierarchy, the z-position can be
+    // calculated for every node simply by multiplying the spacing by the depth.
+    //
+    // `parentSnapshotNode` as referenced here is **not** the actual parent
+    // node of `node`, it is the node **corresponding to** the parent of the
+    // UI element. It is used to convert from frame coordinates, which are
+    // relative to the bounds of the parent, to coordinates relative to the
+    // root node.
+    let positionRelativeToParent = SCNVector3(snapshot.frame.origin.x, y, 0.0)
+    var positionRelativeToRoot: SCNVector3
+    if let parentSnapshotNode = parentSnapshotNode {
+        positionRelativeToRoot = rootNode.convertPosition(positionRelativeToParent, from: parentSnapshotNode)
+    } else {
+        positionRelativeToRoot = positionRelativeToParent
+    }
+    positionRelativeToRoot.z = Float(configuration.zSpacing) * Float(depth)
+    node.position = positionRelativeToRoot
     
     let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
     switch snapshot.label.classification {
@@ -143,31 +203,19 @@ private func snapshotNode(snapshot: Snapshot,
             childDepth = depth + 1
         }
         
-        if let childNode = snapshotNode(snapshot: child,
-                                        parentSnapshot: snapshot,
-                                        rootNode: rootNode,
-                                        parentNode: node,
-                                        depth: &childDepth,
-                                        snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
-                                        configuration: configuration) {
+        if let _ = snapshotNode(snapshot: child,
+                                parentSnapshot: snapshot,
+                                rootNode: rootNode,
+                                parentSnapshotNode: node,
+                                depth: &childDepth,
+                                snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
+                                configuration: configuration) {
             maxChildDepth = max(maxChildDepth, childDepth)
             frames.append(child.frame)
-            node.addChildNode(childNode)
         }
     }
     depth = maxChildDepth
     return node
-}
-
-private func calculateZPosition(depth: Int, spacing: CGFloat, node: SCNNode, rootNode: SCNNode) -> Float
-{
-    // The z-coordinate is calculated by multiplying the specified
-    // spacing between layers by the depth of the layer. This gives us
-    // a z value that is in the coordinate space of the root node, which
-    // then has to be converted to a coordinate in the local coordinate
-    // space of the node we just created.
-    let zInRootCoordinateSpace = spacing * CGFloat(depth)
-    return rootNode.convertPosition(SCNVector3(0, 0, zInRootCoordinateSpace), to: node).z
 }
 
 /// Returns a shape that renders a snapshot image.

@@ -32,7 +32,13 @@ public struct SnapshotViewConfiguration {
     }
     
     /// The spacing between layers along the z-axis.
-    public var zSpacing: CGFloat = 50.0
+    public var zSpacing: Float = 50.0
+    
+    /// The minimum spacing between layers along the z-axis.
+    public var minimumZSpacing: Float = 10.0
+    
+    /// The maximum spacing between layers on the z-axis.
+    public var maximumZSpacing: Float = 200.0
     
     /// The scene's background color, which gets rendered behind
     /// all content.
