@@ -63,19 +63,19 @@ class SnapshotView: UIView {
     }
 }
 
-fileprivate struct NodeIdentifiers {
+private struct NodeIdentifiers {
     static let snapshot = "snapshot"
     static let border = "border"
     static let header = "header"
 }
 
-fileprivate func snapshotNode(snapshot: Snapshot,
-                              parentSnapshot: Snapshot?,
-                              rootNode: SCNNode,
-                              parentNode: SCNNode?,
-                              depth: inout Int,
-                              nodeToSnapshotMap: NSMapTable<SCNNode, Box<Snapshot>>,
-                              configuration: SnapshotViewConfiguration) -> SCNNode? {
+private func snapshotNode(snapshot: Snapshot,
+                          parentSnapshot: Snapshot?,
+                          rootNode: SCNNode,
+                          parentNode: SCNNode?,
+                          depth: inout Int,
+                          nodeToSnapshotMap: NSMapTable<SCNNode, Box<Snapshot>>,
+                          configuration: SnapshotViewConfiguration) -> SCNNode? {
     // Ignore elements that are not visible. These should appear in
     // the tree view, but not in the 3D view.
     if snapshot.isHidden || snapshot.frame.size == .zero {
@@ -158,7 +158,7 @@ fileprivate func snapshotNode(snapshot: Snapshot,
 }
 
 /// Returns a shape that renders a snapshot image.
-fileprivate func snapshotShape(snapshot: Snapshot) -> SCNShape {
+private func snapshotShape(snapshot: Snapshot) -> SCNShape {
     let path = UIBezierPath(rect: CGRect(origin: .zero, size: snapshot.frame.size))
     let shape = SCNShape(path: path, extrusionDepth: 0.0)
     let material = SCNMaterial()
@@ -173,7 +173,7 @@ fileprivate func snapshotShape(snapshot: Snapshot) -> SCNShape {
 }
 
 /// Returns a node that draws a line between two vertices.
-fileprivate func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, color: UIColor) -> SCNNode
+private func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, color: UIColor) -> SCNNode
 {
     let indices: [Int32] = [0, 1]
     let source = SCNGeometrySource(vertices: [vertex1, vertex2])
@@ -190,7 +190,7 @@ fileprivate func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVecto
 
 /// Returns an array of nodes that can be used to render a colored
 /// border around the specified node.
-fileprivate func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
+private func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
     let (min, max) = node.boundingBox;
     
     // This value is chosen so that the border visually appears on
@@ -214,9 +214,9 @@ fileprivate func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
 
 /// Returns a node that renders a header above a snapshot node.
 /// The header contains the name text from the element, if specified.
-fileprivate func headerNode(snapshot: Snapshot,
-                            associatedSnapshotNode: SCNNode,
-                            attributes: SnapshotViewConfiguration.HeaderAttributes) -> SCNNode? {
+private func headerNode(snapshot: Snapshot,
+                        associatedSnapshotNode: SCNNode,
+                        attributes: SnapshotViewConfiguration.HeaderAttributes) -> SCNNode? {
     guard let text = nameTextGeometry(label: snapshot.label, font: attributes.font) else {
         return nil
     }
@@ -242,7 +242,7 @@ fileprivate func headerNode(snapshot: Snapshot,
 }
 
 /// Returns a shape that is used to render the background of the header.
-fileprivate func nameHeaderShape(frame: CGRect, color: UIColor, cornerRadius: CGFloat) -> SCNShape {
+private func nameHeaderShape(frame: CGRect, color: UIColor, cornerRadius: CGFloat) -> SCNShape {
     let path = UIBezierPath(roundedRect: frame, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
     let shape = SCNShape(path: path, extrusionDepth: 0.0)
     let material = SCNMaterial()
@@ -253,7 +253,7 @@ fileprivate func nameHeaderShape(frame: CGRect, color: UIColor, cornerRadius: CG
 }
 
 /// Returns a text geometry used to render text inside the header.
-fileprivate func nameTextGeometry(label: ElementLabel, font: UIFont) -> SCNText? {
+private func nameTextGeometry(label: ElementLabel, font: UIFont) -> SCNText? {
     guard let name = label.name else {
         return nil
     }
