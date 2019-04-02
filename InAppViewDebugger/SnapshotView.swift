@@ -192,7 +192,9 @@ class SnapshotView: UIView {
     }
     
     @objc func handleSpacingSliderChanged(sender: UISlider) {
-        hideHeaderNodes = shouldHideHeaderNodes(zSpacing: sender.value)
+        if shouldHideHeaderNodes(zSpacing: sender.value) {
+            hideHeaderNodes = true
+        }
         
         for (_, nodes) in snapshotIdentifierToNodesMap {
             if let snapshotNode = nodes.snapshotNode {
@@ -202,8 +204,8 @@ class SnapshotView: UIView {
                     return position
                 }()
             }
-            if let headerNode = nodes.headerNode {
-                headerNode.isHidden = hideHeaderNodes
+            if hideHeaderNodes, let headerNode = nodes.headerNode {
+                headerNode.isHidden = true
             }
         }
     }
