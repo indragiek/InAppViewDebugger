@@ -140,36 +140,37 @@ private func snapshotNode(snapshot: Snapshot,
     // The node must be added to the root node for the coordinate
     // space calculations below to work.
     rootNode.addChildNode(node)
-    
-    // Flip the y-coordinate since the SceneKit coordinate system has
-    // a flipped version of the UIKit coordinate system.
-    let y: CGFloat
-    if let parentSnapshot = parentSnapshot {
-        y = parentSnapshot.frame.height - snapshot.frame.maxY
-    } else {
-        y = 0.0
-    }
-    
-    // To simplify calculating the z-axis spacing between the layers, we
-    // make each snapshot node a direct child of the root rather than embedding
-    // the nodes in their parent nodes in the same structure as the UI elements
-    // themselves. With this flattened hierarchy, the z-position can be
-    // calculated for every node simply by multiplying the spacing by the depth.
-    //
-    // `parentSnapshotNode` as referenced here is **not** the actual parent
-    // node of `node`, it is the node **corresponding to** the parent of the
-    // UI element. It is used to convert from frame coordinates, which are
-    // relative to the bounds of the parent, to coordinates relative to the
-    // root node.
-    let positionRelativeToParent = SCNVector3(snapshot.frame.origin.x, y, 0.0)
-    var positionRelativeToRoot: SCNVector3
-    if let parentSnapshotNode = parentSnapshotNode {
-        positionRelativeToRoot = rootNode.convertPosition(positionRelativeToParent, from: parentSnapshotNode)
-    } else {
-        positionRelativeToRoot = positionRelativeToParent
-    }
-    positionRelativeToRoot.z = Float(configuration.zSpacing) * Float(depth)
-    node.position = positionRelativeToRoot
+    node.position = {
+        // Flip the y-coordinate since the SceneKit coordinate system has
+        // a flipped version of the UIKit coordinate system.
+        let y: CGFloat
+        if let parentSnapshot = parentSnapshot {
+            y = parentSnapshot.frame.height - snapshot.frame.maxY
+        } else {
+            y = 0.0
+        }
+        
+        // To simplify calculating the z-axis spacing between the layers, we
+        // make each snapshot node a direct child of the root rather than embedding
+        // the nodes in their parent nodes in the same structure as the UI elements
+        // themselves. With this flattened hierarchy, the z-position can be
+        // calculated for every node simply by multiplying the spacing by the depth.
+        //
+        // `parentSnapshotNode` as referenced here is **not** the actual parent
+        // node of `node`, it is the node **corresponding to** the parent of the
+        // UI element. It is used to convert from frame coordinates, which are
+        // relative to the bounds of the parent, to coordinates relative to the
+        // root node.
+        let positionRelativeToParent = SCNVector3(snapshot.frame.origin.x, y, 0.0)
+        var positionRelativeToRoot: SCNVector3
+        if let parentSnapshotNode = parentSnapshotNode {
+            positionRelativeToRoot = rootNode.convertPosition(positionRelativeToParent, from: parentSnapshotNode)
+        } else {
+            positionRelativeToRoot = positionRelativeToParent
+        }
+        positionRelativeToRoot.z = Float(configuration.zSpacing) * Float(depth)
+        return positionRelativeToRoot
+    }()
     
     let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
     switch snapshot.label.classification {
