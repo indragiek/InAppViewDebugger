@@ -135,17 +135,22 @@ fileprivate func snapshotNode(snapshot: Snapshot,
         }
     }
     depth = maxChildDepth
-    for borderNode in borderNodes(node: node, color: configuration.borderColor) {
+    
+    let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
+    switch snapshot.label.classification {
+    case .normal:
+        headerAttributes = configuration.normalHeaderAttributes
+    case .important:
+        headerAttributes = configuration.importantHeaderAttributes
+    }
+    
+    for borderNode in borderNodes(node: node, color: headerAttributes.color) {
         node.addChildNode(borderNode)
     }
     
     if let headerNode = headerNode(snapshot: snapshot,
                                    associatedSnapshotNode: node,
-                                   color: configuration.headerColor,
-                                   font: configuration.headerFont,
-                                   opacity: configuration.headerOpacity,
-                                   verticalInset: configuration.headerVerticalInset,
-                                   cornerRadius: configuration.headerCornerRadius) {
+                                   attributes: headerAttributes) {
         parentNode?.addChildNode(headerNode)
         nodeToSnapshotMap.setObject(boxedSnapshot, forKey: headerNode)
     }
@@ -212,12 +217,8 @@ fileprivate func borderNodes(node: SCNNode, color: UIColor) -> [SCNNode] {
 /// The header contains the name text from the element, if specified.
 fileprivate func headerNode(snapshot: Snapshot,
                             associatedSnapshotNode: SCNNode,
-                            color: UIColor,
-                            font: UIFont,
-                            opacity: CGFloat,
-                            verticalInset: CGFloat,
-                            cornerRadius: CGFloat) -> SCNNode? {
-    guard let text = nameTextGeometry(snapshot: snapshot, font: font) else {
+                            attributes: SnapshotViewConfiguration.HeaderAttributes) -> SCNNode? {
+    guard let text = nameTextGeometry(label: snapshot.label, font: attributes.font) else {
         return nil
     }
     
@@ -228,15 +229,15 @@ fileprivate func headerNode(snapshot: Snapshot,
     let textWidth = max.x - min.x
     let textHeight = max.y - min.y
     
-    let frame = CGRect(x: 0.0, y: 0.0, width: snapshot.frame.width, height: CGFloat(textHeight) + (verticalInset * 2.0))
-    let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame, color: color, cornerRadius: cornerRadius))
+    let frame = CGRect(x: 0.0, y: 0.0, width: snapshot.frame.width, height: CGFloat(textHeight) + (attributes.verticalInset * 2.0))
+    let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame, color: attributes.color, cornerRadius: attributes.cornerRadius))
     
     textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), 0.5)
     headerNode.addChildNode(textNode)
     
     let snapshotPosition = associatedSnapshotNode.position
     headerNode.position = SCNVector3(snapshotPosition.x, snapshotPosition.y + Float(snapshot.frame.height), associatedSnapshotNode.position.z + 0.5)
-    headerNode.opacity = opacity
+    headerNode.opacity = attributes.opacity
     headerNode.name = NodeIdentifiers.header
     return headerNode
 }
@@ -253,8 +254,8 @@ fileprivate func nameHeaderShape(frame: CGRect, color: UIColor, cornerRadius: CG
 }
 
 /// Returns a text geometry used to render text inside the header.
-fileprivate func nameTextGeometry(snapshot: Snapshot, font: UIFont) -> SCNText? {
-    guard let name = snapshot.name else {
+fileprivate func nameTextGeometry(label: ElementLabel, font: UIFont) -> SCNText? {
+    guard let name = label.name else {
         return nil
     }
     let text = SCNText()

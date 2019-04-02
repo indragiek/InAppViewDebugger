@@ -8,23 +8,33 @@
 
 import CoreGraphics
 
+/// Provides identifying information for an element that is displayed in the
+/// view debugger.
+public struct ElementLabel {
+    /// Classification for an element that determines how it is represented
+    /// in the view debugger.
+    ///
+    /// - normal: An element of normal importance.
+    /// - important: An element of higher importance that is highlighted.
+    public enum Classification {
+        case normal
+        case important
+    }
+    
+    public let name: String?
+    public let classification: Classification
+    
+    public init(name: String?, classification: Classification = .normal) {
+        self.name = name
+        self.classification = classification
+    }
+}
+
 /// A UI element that can be snapshotted.
 public protocol Element {
-    /// The name of the element, to be displayed in the hierarchy view.
-    var name: String? { get }
-    
-    /// The name of the element, to be displayed in the view debugger.
-    var viewDebuggerName: String? { get }
-    
-    /// Returns the frame of the element on screen.
+    var label: ElementLabel { get }
     var frame: CGRect { get }
-    
-    /// Returns whether the element is hidden.
     var isHidden: Bool { get }
-    
-    /// Returns a snapshot of the element in its current state.
     var snapshotImage: CGImage? { get }
-
-    /// Returns a sequence of the children of the element.
     var children: AnySequence<Element> { get }
 }

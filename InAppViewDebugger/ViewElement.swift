@@ -8,24 +8,48 @@
 
 import UIKit
 
-extension UIView: Element {
-    public var name: String? {
-        return String(describing: type(of: self))
+/// An element that represents a UIView.
+public struct ViewElement: Element {
+    public var label: ElementLabel {
+        guard let view = view else {
+            return ElementLabel(name: nil)
+        }
+        if let viewController = getViewController(view: view) {
+            let name = "\(String(describing: Swift.type(of: viewController))) (\(String(describing: Swift.type(of: view))))"
+            return ElementLabel(name: name, classification: .important)
+        } else {
+            return ElementLabel(name: String(describing: Swift.type(of: view)))
+        }
     }
     
-    public var viewDebuggerName: String? {
-        if let viewController = getViewController(view: self) {
-            return "\(String(describing: type(of: viewController))) (\(String(describing: type(of: self))))"
-        }
-        return nil
+    public var frame: CGRect {
+        return view?.frame ?? .zero
+    }
+    
+    public var isHidden: Bool {
+        return view?.isHidden ?? false
     }
     
     public var snapshotImage: CGImage? {
-        return InAppViewDebugger.snapshotView(self)
+        guard let view = view else {
+            return nil
+        }
+        return snapshotView(view)
     }
 
     public var children: AnySequence<Element> {
-        return AnySequence(subviews)
+        guard let view = view else {
+            return AnySequence(EmptyCollection())
+        }
+        return AnySequence(view.subviews.lazy.map {
+            ViewElement(view: $0)
+        })
+    }
+    
+    private weak var view: UIView?
+    
+    public init(view: UIView) {
+        self.view = view
     }
 }
 

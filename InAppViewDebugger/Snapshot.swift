@@ -8,31 +8,16 @@
 
 /// A snapshot of the UI element tree in its current state.
 public struct Snapshot {
-    /// The name of the element, to be displayed in the hierarchy view.
-    public let name: String?
-    
-    /// The name of the element, to be displayed in the view debugger.
-    public let viewDebuggerName: String?
-    
-    /// The frame of the element on screen.
+    public let label: ElementLabel
     public let frame: CGRect
-    
-    /// Returns whether the element is hidden.
     public let isHidden: Bool
-    
-    /// A snapshot of the element in its current state.
-    public private(set) var snapshotImage: CGImage?
-    
-    /// An array of the snapshots of the child elements.
+    public let snapshotImage: CGImage?
     public let children: [Snapshot]
-    
-    /// The element being snapshotted.
     private let element: Element
     
     public init(element: Element) {
         self.element = element
-        self.name = element.name
-        self.viewDebuggerName = element.viewDebuggerName
+        self.label = element.label
         self.frame = element.frame
         self.isHidden = element.isHidden
         self.snapshotImage = element.snapshotImage
