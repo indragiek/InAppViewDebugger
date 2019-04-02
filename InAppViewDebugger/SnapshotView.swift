@@ -97,15 +97,18 @@ class SnapshotView: UIView {
     }
     
     @objc func handleSpacingSliderChanged(sender: UISlider) {
+        let hideHeaderNodes = sender.value == 0.0
         for (_, nodes) in snapshotIdentifierToNodesMap {
-            guard let snapshotNode = nodes.snapshotNode else {
-                continue
+            if let snapshotNode = nodes.snapshotNode {
+                snapshotNode.position = {
+                    var position = snapshotNode.position
+                    position.z = max(sender.value, smallZOffset) * Float(nodes.depth)
+                    return position
+                }()
             }
-            snapshotNode.position = {
-                var position = snapshotNode.position
-                position.z = sender.value * Float(nodes.depth)
-                return position
-            }()
+            if let headerNode = nodes.headerNode {
+                headerNode.isHidden = hideHeaderNodes
+            }
         }
     }
 }
@@ -199,6 +202,9 @@ private func snapshotNode(snapshot: Snapshot,
                                attributes: headerAttributes) {
         node.addChildNode(header)
         nodes.headerNode = header
+        if configuration.zSpacing == 0.0 {
+            header.isHidden = true
+        }
     }
     
     snapshotIdentifierToNodesMap[snapshot.identifier] = nodes
