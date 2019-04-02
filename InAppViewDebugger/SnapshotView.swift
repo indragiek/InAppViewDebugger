@@ -100,14 +100,6 @@ private func snapshotNode(snapshot: Snapshot,
     // space calculations below to work.
     parentNode?.addChildNode(node)
     
-    // The z-coordinate is calculated by multiplying the specified
-    // spacing between layers by the depth of the layer. This gives us
-    // a z value that is in the coordinate space of the root node, which
-    // then has to be converted to a coordinate in the local coordinate
-    // space of the node we just created.
-    let zInRootCoordinateSpace = configuration.zSpacing * CGFloat(depth)
-    let z = rootNode.convertPosition(SCNVector3(0, 0, zInRootCoordinateSpace), to: node).z
-    
     // Flip the y-coordinate since the SceneKit coordinate system has
     // a flipped version of the UIKit coordinate system.
     let y: CGFloat
@@ -116,6 +108,7 @@ private func snapshotNode(snapshot: Snapshot,
     } else {
         y = 0.0
     }
+    let z = calculateZPosition(depth: depth, spacing: configuration.zSpacing, node: node, rootNode: rootNode)
     node.position = SCNVector3(snapshot.frame.origin.x, y, CGFloat(z))
     
     let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
@@ -164,6 +157,17 @@ private func snapshotNode(snapshot: Snapshot,
     }
     depth = maxChildDepth
     return node
+}
+
+private func calculateZPosition(depth: Int, spacing: CGFloat, node: SCNNode, rootNode: SCNNode) -> Float
+{
+    // The z-coordinate is calculated by multiplying the specified
+    // spacing between layers by the depth of the layer. This gives us
+    // a z value that is in the coordinate space of the root node, which
+    // then has to be converted to a coordinate in the local coordinate
+    // space of the node we just created.
+    let zInRootCoordinateSpace = spacing * CGFloat(depth)
+    return rootNode.convertPosition(SCNVector3(0, 0, zInRootCoordinateSpace), to: node).z
 }
 
 /// Returns a shape that renders a snapshot image.
