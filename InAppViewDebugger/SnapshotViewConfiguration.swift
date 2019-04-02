@@ -25,9 +25,6 @@ public struct SnapshotViewConfiguration {
         /// The font used to render the name text in the header.
         public var font = UIFont.boldSystemFont(ofSize: 13)
         
-        /// The opacity of the header.
-        public var opacity: CGFloat = 0.90
-        
         public init() {}
     }
     
@@ -47,14 +44,14 @@ public struct SnapshotViewConfiguration {
     /// The attributes for a header of normal importance.
     public var normalHeaderAttributes: HeaderAttributes = {
         var attributes = HeaderAttributes()
-        attributes.color = UIColor(red: 0.000, green: 0.533, blue: 1.000, alpha: 1.000)
+        attributes.color = UIColor(red: 0.000, green: 0.533, blue: 1.000, alpha: 0.900)
         return attributes
     }()
     
     /// The attributes for a header of higher importance.
     public var importantHeaderAttributes: HeaderAttributes = {
         var attributes = HeaderAttributes()
-        attributes.color = UIColor(red: 0.961, green: 0.651, blue: 0.137, alpha: 1.000)
+        attributes.color = UIColor(red: 0.961, green: 0.651, blue: 0.137, alpha: 0.900)
         return attributes
     }()
     

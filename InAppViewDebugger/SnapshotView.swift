@@ -426,7 +426,6 @@ private func headerNode(snapshot: Snapshot,
     headerNode.addChildNode(textNode)
     
     headerNode.position = SCNVector3((snapshotWidth / 2.0) - (headerWidth / 2.0), (snapshot.frame.height), CGFloat(smallZOffset))
-    headerNode.opacity = attributes.opacity
     return headerNode
 }
 
