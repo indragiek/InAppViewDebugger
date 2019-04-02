@@ -156,9 +156,9 @@ class SnapshotView: UIView {
     private func getGlobalMenuItems() -> [UIMenuItem] {
         var menuItems = [UIMenuItem]()
         if hideHeaderNodes {
-            menuItems.append(UIMenuItem(title: "Show Headers", action: #selector(showHideHeaderNodes(sender:))))
+            menuItems.append(UIMenuItem(title: NSLocalizedString("Show Headers", comment: "Show the headers above each UI element"), action: #selector(showHideHeaderNodes(sender:))))
         } else {
-            menuItems.append(UIMenuItem(title: "Hide Headers", action: #selector(showHideHeaderNodes(sender:))))
+            menuItems.append(UIMenuItem(title: NSLocalizedString("Hide Headers", comment: "Hide the headers above each UI element"), action: #selector(showHideHeaderNodes(sender:))))
         }
         return menuItems
     }
