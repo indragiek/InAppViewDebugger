@@ -132,7 +132,8 @@ fileprivate func snapshotVisualEffectBackdropView(_ view: UIView) -> CGImage?
 }
 
 fileprivate func snapshotView(_ view: UIView) -> CGImage? {
-    if String(describing: type(of: view)) == "_UIVisualEffectBackdropView" {
+    if let superview = view.superview, let _ = superview as? UIVisualEffectView,
+        superview.subviews.first == view {
         return snapshotVisualEffectBackdropView(view)
     }
     var subviewHidden = [Bool]()
