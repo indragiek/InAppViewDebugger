@@ -41,6 +41,10 @@ public struct SnapshotViewConfiguration {
     /// all content.
     public var backgroundColor = UIColor.white
     
+    /// The color of the highlight overlaid on top of a UI element when it
+    /// is selected.
+    public var highlightColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.5)
+    
     /// The attributes for a header of normal importance.
     public var normalHeaderAttributes: HeaderAttributes = {
         var attributes = HeaderAttributes()
