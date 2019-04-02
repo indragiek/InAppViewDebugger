@@ -21,18 +21,26 @@ class SnapshotView: UIView {
     private let sceneView: SCNView
     private let spacingSlider: UISlider
     private var snapshotIdentifierToNodesMap = [String: Nodes]()
+    private var hideHeaderNodes: Bool
+    private var menuVisible: Bool = false
+    
+    // MARK: Initialization
     
     public init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.configuration = configuration
         self.snapshot = snapshot
+        
         sceneView = SCNView()
         spacingSlider = UISlider()
+        hideHeaderNodes = shouldHideHeaderNodes(zSpacing: configuration.zSpacing)
         
         super.init(frame: .zero)
         
         configureSceneView()
         configureSpacingSlider()
         configureTapGestureRecognizer()
+        configureLongPressGestureRecognizer()
+        configureNotificationObservers()
     }
     
     private func configureSceneView() {
@@ -46,7 +54,8 @@ class SnapshotView: UIView {
                          parentSnapshotNode: nil,
                          depth: &depth,
                          snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
-                         configuration: configuration)
+                         configuration: configuration,
+                         hideHeaderNodes: hideHeaderNodes)
         sceneView.scene = scene
         sceneView.allowsCameraControl = true
         addSubview(sceneView)
@@ -66,9 +75,22 @@ class SnapshotView: UIView {
         addGestureRecognizer(tapGestureRecognizer)
     }
     
+    private func configureLongPressGestureRecognizer() {
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
+        addGestureRecognizer(longPressGestureRecognizer)
+    }
+    
+    private func configureNotificationObservers() {
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(didShowMenuItem(notification:)), name: UIMenuController.didShowMenuNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(didHideMenuItem(notification:)), name: UIMenuController.didHideMenuNotification, object: nil)
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: UIView
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -84,20 +106,75 @@ class SnapshotView: UIView {
         )
     }
     
+    // MARK: UIResponder
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
+    override var canResignFirstResponder: Bool {
+        return true
+    }
+    
     // MARK: Actions
     
     @objc func handleTap(sender: UITapGestureRecognizer) {
-        if sender.state == .ended {
-            let point = sender.location(ofTouch: 0, in: sceneView)
-            let hitTestResult = sceneView.hitTest(point, options: nil)
-            for result in hitTestResult {
-                print(result.node)
+        guard sender.state == .ended else {
+            return
+        }
+        if menuVisible {
+            UIMenuController.shared.setMenuVisible(false, animated: true)
+        }
+        
+        let point = sender.location(ofTouch: 0, in: sceneView)
+        let hitTestResult = sceneView.hitTest(point, options: nil)
+        for result in hitTestResult {
+            print(result.node)
+        }
+    }
+    
+    @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
+        guard sender.state == .began else {
+            return
+        }
+        
+        let point = sender.location(ofTouch: 0, in: sceneView)
+        let hitTestResult = sceneView.hitTest(point, options: nil)
+        if hitTestResult.isEmpty {
+            showMenuForItems(items: getGlobalMenuItems(), point: point)
+        }
+    }
+    
+    private func showMenuForItems(items: [UIMenuItem], point: CGPoint) {
+        becomeFirstResponder()
+        let menuController = UIMenuController.shared
+        menuController.menuItems = items
+        menuController.setTargetRect(CGRect(origin: point, size: .zero), in: self)
+        menuController.setMenuVisible(true, animated: true)
+    }
+    
+    private func getGlobalMenuItems() -> [UIMenuItem] {
+        var menuItems = [UIMenuItem]()
+        if hideHeaderNodes {
+            menuItems.append(UIMenuItem(title: "Show Headers", action: #selector(showHideHeaderNodes(sender:))))
+        } else {
+            menuItems.append(UIMenuItem(title: "Hide Headers", action: #selector(showHideHeaderNodes(sender:))))
+        }
+        return menuItems
+    }
+    
+    @objc func showHideHeaderNodes(sender: UIMenuItem) {
+        hideHeaderNodes = !hideHeaderNodes
+        for (_, nodes) in snapshotIdentifierToNodesMap {
+            if let headerNode = nodes.headerNode {
+                headerNode.isHidden = hideHeaderNodes
             }
         }
     }
     
     @objc func handleSpacingSliderChanged(sender: UISlider) {
-        let hideHeaderNodes = sender.value <= smallZOffset
+        hideHeaderNodes = shouldHideHeaderNodes(zSpacing: sender.value)
+        
         for (_, nodes) in snapshotIdentifierToNodesMap {
             if let snapshotNode = nodes.snapshotNode {
                 snapshotNode.position = {
@@ -110,6 +187,16 @@ class SnapshotView: UIView {
                 headerNode.isHidden = hideHeaderNodes
             }
         }
+    }
+    
+    // MARK: Notifications
+    
+    @objc func didShowMenuItem(notification: Notification) {
+        menuVisible = true
+    }
+    
+    @objc func didHideMenuItem(notification: Notification) {
+        menuVisible = false
     }
 }
 
@@ -132,13 +219,19 @@ private struct Nodes {
 // visually be on the same plane.
 private let smallZOffset: Float = 0.5
 
+/// Returns whether the header nodes should be hidden for a given z-axis spacing.
+private func shouldHideHeaderNodes(zSpacing: Float) -> Bool {
+    return zSpacing <= smallZOffset
+}
+
 private func snapshotNode(snapshot: Snapshot,
                           parentSnapshot: Snapshot?,
                           rootNode: SCNNode,
                           parentSnapshotNode: SCNNode?,
                           depth: inout Int,
                           snapshotIdentifierToNodesMap: inout [String: Nodes],
-                          configuration: SnapshotViewConfiguration) -> SCNNode? {
+                          configuration: SnapshotViewConfiguration,
+                          hideHeaderNodes: Bool) -> SCNNode? {
     // Ignore elements that are not visible. These should appear in
     // the tree view, but not in the 3D view.
     if snapshot.isHidden || snapshot.frame.size == .zero {
@@ -202,7 +295,7 @@ private func snapshotNode(snapshot: Snapshot,
                                attributes: headerAttributes) {
         node.addChildNode(header)
         nodes.headerNode = header
-        if configuration.zSpacing <= smallZOffset {
+        if hideHeaderNodes {
             header.isHidden = true
         }
     }
@@ -227,7 +320,8 @@ private func snapshotNode(snapshot: Snapshot,
                                 parentSnapshotNode: node,
                                 depth: &childDepth,
                                 snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
-                                configuration: configuration) {
+                                configuration: configuration,
+                                hideHeaderNodes: hideHeaderNodes) {
             maxChildDepth = max(maxChildDepth, childDepth)
             frames.append(child.frame)
         }
