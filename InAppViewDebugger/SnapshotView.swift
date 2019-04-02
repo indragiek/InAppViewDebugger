@@ -22,6 +22,7 @@ class SnapshotView: UIView {
     private let spacingSlider: UISlider
     private var snapshotIdentifierToNodesMap = [String: Nodes]()
     private var hideHeaderNodes: Bool
+    private var hideBorderNodes: Bool = false
     private var menuVisible: Bool = false
     
     // MARK: Initialization
@@ -154,21 +155,39 @@ class SnapshotView: UIView {
     }
     
     private func getGlobalMenuItems() -> [UIMenuItem] {
-        var menuItems = [UIMenuItem]()
+        let headerItemTitle: String
         if hideHeaderNodes {
-            menuItems.append(UIMenuItem(title: NSLocalizedString("Show Headers", comment: "Show the headers above each UI element"), action: #selector(showHideHeaderNodes(sender:))))
+            headerItemTitle = NSLocalizedString("Show Headers", comment: "Show the headers above each UI element")
         } else {
-            menuItems.append(UIMenuItem(title: NSLocalizedString("Hide Headers", comment: "Hide the headers above each UI element"), action: #selector(showHideHeaderNodes(sender:))))
+            headerItemTitle = NSLocalizedString("Hide Headers", comment: "Hide the headers above each UI element")
         }
-        return menuItems
+        
+        let borderItemTitle: String
+        if hideBorderNodes {
+            borderItemTitle = NSLocalizedString("Show Borders", comment: "Show the borders around each UI element")
+        } else {
+            borderItemTitle = NSLocalizedString("Hide Borders", comment: "Hide the borders around each UI element")
+        }
+        
+        return [
+            UIMenuItem(title: headerItemTitle, action: #selector(showHideHeaderNodes(sender:))),
+            UIMenuItem(title: borderItemTitle, action: #selector(showHideBorderNodes(sender:)))
+        ]
     }
     
     @objc func showHideHeaderNodes(sender: UIMenuItem) {
         hideHeaderNodes = !hideHeaderNodes
+        
         for (_, nodes) in snapshotIdentifierToNodesMap {
-            if let headerNode = nodes.headerNode {
-                headerNode.isHidden = hideHeaderNodes
-            }
+            nodes.headerNode?.isHidden = hideHeaderNodes
+        }
+    }
+    
+    @objc func showHideBorderNodes(sender: UIMenuItem) {
+        hideBorderNodes = !hideBorderNodes
+        
+        for (_, nodes) in snapshotIdentifierToNodesMap {
+            nodes.borderNode?.isHidden = hideBorderNodes
         }
     }
     
