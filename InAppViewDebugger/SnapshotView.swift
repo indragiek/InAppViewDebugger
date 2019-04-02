@@ -12,6 +12,10 @@ import SceneKit
 /// A view that renders an interactive 3D representation of a UI element
 /// hierarchy snapshot.
 class SnapshotView: UIView {
+    struct LayoutConstants {
+        static let spacingSliderHorizontalInset: CGFloat = 10.0
+    }
+    
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
     private let sceneView: SCNView
@@ -73,9 +77,9 @@ class SnapshotView: UIView {
         let sliderSize = spacingSlider.sizeThatFits(bounds.size)
         let safeAreaInsets = self.safeAreaInsets
         spacingSlider.frame = CGRect(
-            x: safeAreaInsets.left,
+            x: safeAreaInsets.left + LayoutConstants.spacingSliderHorizontalInset,
             y: bounds.maxY - sliderSize.height - safeAreaInsets.bottom,
-            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
+            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right) - (LayoutConstants.spacingSliderHorizontalInset * 2.0),
             height: sliderSize.height
         )
     }
