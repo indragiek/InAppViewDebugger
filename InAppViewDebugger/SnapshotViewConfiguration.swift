@@ -6,7 +6,7 @@
 //  Copyright © 2019 Indragie Karunaratne. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 /// Configuration options for the 3D snapshot view.
 public struct SnapshotViewConfiguration {
