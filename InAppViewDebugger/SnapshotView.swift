@@ -305,6 +305,7 @@ private func highlightNode(snapshot: Snapshot, color: UIColor) -> SCNNode {
     let shape = SCNShape(path: path, extrusionDepth: 0.0)
     
     let material = SCNMaterial()
+    material.isDoubleSided = true
     material.diffuse.contents = color
     shape.insertMaterial(material, at: 0)
     
