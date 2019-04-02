@@ -101,9 +101,11 @@ class SnapshotView: UIView {
             guard let snapshotNode = nodes.snapshotNode else {
                 continue
             }
-            var position = snapshotNode.position
-            position.z = sender.value * Float(nodes.depth)
-            snapshotNode.position = position
+            snapshotNode.position = {
+                var position = snapshotNode.position
+                position.z = sender.value * Float(nodes.depth)
+                return position
+            }()
         }
     }
 }
