@@ -132,10 +132,9 @@ private func snapshotNode(snapshot: Snapshot,
     nodes.borderNode = border
     
     if let header = headerNode(snapshot: snapshot,
-                               associatedSnapshotNode: node,
                                attributes: headerAttributes) {
         header.name = snapshot.identifier
-        parentNode?.addChildNode(header)
+        node.addChildNode(header)
         nodes.headerNode = header
     }
     
@@ -230,7 +229,6 @@ private func borderNode(node: SCNNode, color: UIColor) -> SCNNode {
 /// Returns a node that renders a header above a snapshot node.
 /// The header contains the name text from the element, if specified.
 private func headerNode(snapshot: Snapshot,
-                        associatedSnapshotNode: SCNNode,
                         attributes: SnapshotViewConfiguration.HeaderAttributes) -> SCNNode? {
     guard let text = nameTextGeometry(label: snapshot.label, font: attributes.font) else {
         return nil
@@ -247,8 +245,7 @@ private func headerNode(snapshot: Snapshot,
     textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), 0.5)
     headerNode.addChildNode(textNode)
     
-    let snapshotPosition = associatedSnapshotNode.position
-    headerNode.position = SCNVector3(snapshotPosition.x, snapshotPosition.y + Float(snapshot.frame.height), associatedSnapshotNode.position.z + 0.5)
+    headerNode.position = SCNVector3(0.0, Float(snapshot.frame.height), 0.5)
     headerNode.opacity = attributes.opacity
     return headerNode
 }
