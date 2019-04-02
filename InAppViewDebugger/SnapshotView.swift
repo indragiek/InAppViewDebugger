@@ -124,6 +124,11 @@ private struct Nodes {
     }
 }
 
+// This value is chosen such that this offset can be applied to avoid z-fighting
+// amongst nodes at the same z-position, but small enough that they appear to
+// visually be on the same plane.
+private let smallZOffset: Float = 0.5
+
 private func snapshotNode(snapshot: Snapshot,
                           parentSnapshot: Snapshot?,
                           rootNode: SCNNode,
@@ -260,15 +265,10 @@ private func lineFrom(vertex vertex1: SCNVector3, toVertex vertex2: SCNVector3, 
 /// border around the specified node.
 private func borderNode(node: SCNNode, color: UIColor) -> SCNNode {
     let (min, max) = node.boundingBox;
-    
-    // This value is chosen so that the border visually appears on
-    // top of the node, but is offset slightly on the z-axis to avoid
-    // z-fighting.
-    let z: Float = 0.5
-    let topLeft = SCNVector3(min.x, max.y, z)
-    let bottomLeft = SCNVector3(min.x, min.y, z)
-    let topRight = SCNVector3(max.x, max.y, z)
-    let bottomRight = SCNVector3(max.x, min.y, z)
+    let topLeft = SCNVector3(min.x, max.y, smallZOffset)
+    let bottomLeft = SCNVector3(min.x, min.y, smallZOffset)
+    let topRight = SCNVector3(max.x, max.y, smallZOffset)
+    let bottomRight = SCNVector3(max.x, min.y, smallZOffset)
     
     let bottom = lineFrom(vertex: bottomLeft, toVertex: bottomRight, color: color)
     let left = lineFrom(vertex: bottomLeft, toVertex: topLeft, color: color)
@@ -299,10 +299,10 @@ private func headerNode(snapshot: Snapshot,
     let frame = CGRect(x: 0.0, y: 0.0, width: snapshot.frame.width, height: CGFloat(textHeight) + (attributes.verticalInset * 2.0))
     let headerNode = SCNNode(geometry: nameHeaderShape(frame: frame, color: attributes.color, cornerRadius: attributes.cornerRadius))
     
-    textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), 0.5)
+    textNode.position = SCNVector3((Float(frame.width) / 2.0) - (textWidth / 2.0), (Float(frame.height) / 2.0) - (textHeight / 2.0), smallZOffset)
     headerNode.addChildNode(textNode)
     
-    headerNode.position = SCNVector3(0.0, Float(snapshot.frame.height), 0.5)
+    headerNode.position = SCNVector3(0.0, Float(snapshot.frame.height), smallZOffset)
     headerNode.opacity = attributes.opacity
     return headerNode
 }
