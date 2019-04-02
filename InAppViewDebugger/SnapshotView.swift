@@ -110,6 +110,25 @@ fileprivate func snapshotNode(snapshot: Snapshot,
     }
     node.position = SCNVector3(snapshot.frame.origin.x, y, CGFloat(z))
     
+    let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
+    switch snapshot.label.classification {
+    case .normal:
+        headerAttributes = configuration.normalHeaderAttributes
+    case .important:
+        headerAttributes = configuration.importantHeaderAttributes
+    }
+    
+    for borderNode in borderNodes(node: node, color: headerAttributes.color) {
+        node.addChildNode(borderNode)
+    }
+    
+    if let headerNode = headerNode(snapshot: snapshot,
+                                   associatedSnapshotNode: node,
+                                   attributes: headerAttributes) {
+        parentNode?.addChildNode(headerNode)
+        nodeToSnapshotMap.setObject(boxedSnapshot, forKey: headerNode)
+    }
+    
     var frames = [CGRect]()
     var maxChildDepth = depth
     snapshot.children.forEach { child in
@@ -135,26 +154,6 @@ fileprivate func snapshotNode(snapshot: Snapshot,
         }
     }
     depth = maxChildDepth
-    
-    let headerAttributes: SnapshotViewConfiguration.HeaderAttributes
-    switch snapshot.label.classification {
-    case .normal:
-        headerAttributes = configuration.normalHeaderAttributes
-    case .important:
-        headerAttributes = configuration.importantHeaderAttributes
-    }
-    
-    for borderNode in borderNodes(node: node, color: headerAttributes.color) {
-        node.addChildNode(borderNode)
-    }
-    
-    if let headerNode = headerNode(snapshot: snapshot,
-                                   associatedSnapshotNode: node,
-                                   attributes: headerAttributes) {
-        parentNode?.addChildNode(headerNode)
-        nodeToSnapshotMap.setObject(boxedSnapshot, forKey: headerNode)
-    }
-    
     return node
 }
 
