@@ -31,17 +31,13 @@ protocol SnapshotViewDelegate: AnyObject {
 /// A view that renders an interactive 3D representation of a UI element
 /// hierarchy snapshot.
 class SnapshotView: UIView {
-    struct LayoutConstants {
-        static let spacingSliderInsets = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 10.0)
-        static let descriptionLabelInsets = UIEdgeInsets(top: 5.0, left: 5.0, bottom: 0.0, right: 5.0)
-    }
-    
     public weak var delegate: SnapshotViewDelegate?
     
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
     private let sceneView: SCNView
     private let spacingSlider: UISlider
+    private let depthSlider: RangeSlider
     private let descriptionLabel: UILabel
     
     private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
@@ -59,6 +55,7 @@ class SnapshotView: UIView {
         
         sceneView = SCNView()
         spacingSlider = UISlider()
+        depthSlider = RangeSlider()
         descriptionLabel = UILabel()
         hideHeaderNodes = shouldHideHeaderNodes(zSpacing: configuration.zSpacing)
         
@@ -66,6 +63,7 @@ class SnapshotView: UIView {
         
         configureSceneView()
         configureSpacingSlider()
+        configureDepthSlider()
         configureDescriptionLabel()
         configureTapGestureRecognizer()
         configureLongPressGestureRecognizer()
@@ -87,7 +85,15 @@ class SnapshotView: UIView {
                          hideHeaderNodes: hideHeaderNodes)
         sceneView.scene = scene
         sceneView.allowsCameraControl = true
+        sceneView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(sceneView)
+        
+        NSLayoutConstraint.activate([
+            sceneView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            sceneView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            sceneView.topAnchor.constraint(equalTo: topAnchor),
+            sceneView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
     
     private func configureSpacingSlider() {
@@ -96,14 +102,39 @@ class SnapshotView: UIView {
         spacingSlider.isContinuous = true
         spacingSlider.addTarget(self, action: #selector(handleSpacingSliderChanged(sender:)), for: .valueChanged)
         spacingSlider.setValue(configuration.zSpacing, animated: false)
+        spacingSlider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(spacingSlider)
+        
+        NSLayoutConstraint.activate([
+            spacingSlider.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
+            spacingSlider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
+        ])
+    }
+    
+    private func configureDepthSlider() {
+        depthSlider.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(depthSlider)
+        
+        NSLayoutConstraint.activate([
+            depthSlider.leadingAnchor.constraint(equalTo: spacingSlider.trailingAnchor, constant: 10.0),
+            depthSlider.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -3.0),
+            depthSlider.centerYAnchor.constraint(equalTo: spacingSlider.centerYAnchor, constant: 1.0),
+            depthSlider.widthAnchor.constraint(equalTo: spacingSlider.widthAnchor, constant: 0.0)
+        ])
     }
     
     private func configureDescriptionLabel() {
         descriptionLabel.font = configuration.descriptionFont
         descriptionLabel.textAlignment = .center
         descriptionLabel.adjustsFontSizeToFitWidth = true
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(descriptionLabel)
+        
+        NSLayoutConstraint.activate([
+            descriptionLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 5.0),
+            descriptionLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 5.0),
+            descriptionLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: 5.0),
+        ])
     }
     
     private func configureTapGestureRecognizer() {
@@ -124,30 +155,6 @@ class SnapshotView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: UIView
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        sceneView.frame = bounds
-        let safeAreaInsets = self.safeAreaInsets
-        
-        let sliderSize = spacingSlider.sizeThatFits(bounds.size)
-        spacingSlider.frame = CGRect(
-            x: safeAreaInsets.left,
-            y: bounds.maxY - sliderSize.height - safeAreaInsets.bottom,
-            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
-            height: sliderSize.height
-        ).inset(by: LayoutConstants.spacingSliderInsets)
-        
-        let descriptionLabelSize = descriptionLabel.sizeThatFits(bounds.size)
-        descriptionLabel.frame = CGRect(
-            x: safeAreaInsets.left,
-            y: safeAreaInsets.top,
-            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
-            height: descriptionLabelSize.height
-        ).inset(by: LayoutConstants.descriptionLabelInsets)
     }
     
     // MARK: UIResponder

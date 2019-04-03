@@ -22,6 +22,7 @@
 		034CC4BB2251EA0000953FC3 /* SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BA2251EA0000953FC3 /* SnapshotView.swift */; };
 		034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */; };
 		03A4283D225481CD00A5242D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03A4283C225481CD00A5242D /* Assets.xcassets */; };
+		03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A4283E2254829E00A5242D /* RangeSlider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		034CC4BA2251EA0000953FC3 /* SnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotView.swift; sourceTree = "<group>"; };
 		034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotViewConfiguration.swift; sourceTree = "<group>"; };
 		03A4283C225481CD00A5242D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		03A4283E2254829E00A5242D /* RangeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 				034CC4BA2251EA0000953FC3 /* SnapshotView.swift */,
 				034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */,
 				034CC4992251A22200953FC3 /* SnapshotViewController.swift */,
+				03A4283E2254829E00A5242D /* RangeSlider.swift */,
 				03A4283C225481CD00A5242D /* Assets.xcassets */,
 			);
 			path = InAppViewDebugger;
@@ -254,6 +257,7 @@
 				034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */,
 				034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */,
 				034CC49C2251A22200953FC3 /* SnapshotViewController.swift in Sources */,
+				03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */,
 				034CC49B2251A22200953FC3 /* ViewElement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
