@@ -16,13 +16,24 @@ protocol SnapshotViewDelegate: AnyObject {
     /// Called when an element is deselected by tapping on a different element or when
     /// tapping outside the interactive area.
     func snapshotView(_ snapshotView: SnapshotView, didDeselectElement element: Element)
+    
+    /// Called when "Focus" is selected from the actions menu for an element, indicating
+    /// that a new view should be presented that focuses only on the hierarchy from
+    /// this element.
+    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElement element: Element)
+    
+    /// Called when "Show Description" is selected from the actions menu for an element,
+    /// indicating that the delegate should present the description associated with the
+    /// element.
+    func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element)
 }
 
 /// A view that renders an interactive 3D representation of a UI element
 /// hierarchy snapshot.
 class SnapshotView: UIView {
     struct LayoutConstants {
-        static let spacingSliderHorizontalInset: CGFloat = 10.0
+        static let spacingSliderInsets = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 10.0)
+        static let descriptionLabelInsets = UIEdgeInsets(top: 5.0, left: 5.0, bottom: 0.0, right: 5.0)
     }
     
     public weak var delegate: SnapshotViewDelegate?
@@ -31,11 +42,14 @@ class SnapshotView: UIView {
     private let snapshot: Snapshot
     private let sceneView: SCNView
     private let spacingSlider: UISlider
+    private let descriptionLabel: UILabel
+    
     private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
     private var highlightedNodes: SnapshotNodes?
     private var hideHeaderNodes: Bool
     private var hideBorderNodes: Bool = false
     private var menuVisible: Bool = false
+    private var menuAssociatedElement: Element?
     
     // MARK: Initialization
     
@@ -45,12 +59,14 @@ class SnapshotView: UIView {
         
         sceneView = SCNView()
         spacingSlider = UISlider()
+        descriptionLabel = UILabel()
         hideHeaderNodes = shouldHideHeaderNodes(zSpacing: configuration.zSpacing)
         
         super.init(frame: .zero)
         
         configureSceneView()
         configureSpacingSlider()
+        configureDescriptionLabel()
         configureTapGestureRecognizer()
         configureLongPressGestureRecognizer()
         configureNotificationObservers()
@@ -83,6 +99,13 @@ class SnapshotView: UIView {
         addSubview(spacingSlider)
     }
     
+    private func configureDescriptionLabel() {
+        descriptionLabel.font = configuration.descriptionFont
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.adjustsFontSizeToFitWidth = true
+        addSubview(descriptionLabel)
+    }
+    
     private func configureTapGestureRecognizer() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(sender:)))
         addGestureRecognizer(tapGestureRecognizer)
@@ -108,15 +131,23 @@ class SnapshotView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         sceneView.frame = bounds
+        let safeAreaInsets = self.safeAreaInsets
         
         let sliderSize = spacingSlider.sizeThatFits(bounds.size)
-        let safeAreaInsets = self.safeAreaInsets
         spacingSlider.frame = CGRect(
-            x: safeAreaInsets.left + LayoutConstants.spacingSliderHorizontalInset,
+            x: safeAreaInsets.left,
             y: bounds.maxY - sliderSize.height - safeAreaInsets.bottom,
-            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right) - (LayoutConstants.spacingSliderHorizontalInset * 2.0),
+            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
             height: sliderSize.height
-        )
+        ).inset(by: LayoutConstants.spacingSliderInsets)
+        
+        let descriptionLabelSize = descriptionLabel.sizeThatFits(bounds.size)
+        descriptionLabel.frame = CGRect(
+            x: safeAreaInsets.left,
+            y: safeAreaInsets.top,
+            width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right),
+            height: descriptionLabelSize.height
+        ).inset(by: LayoutConstants.descriptionLabelInsets)
     }
     
     // MARK: UIResponder
@@ -129,7 +160,7 @@ class SnapshotView: UIView {
         return true
     }
     
-    // MARK: Actions
+    // MARK: Gesture Recognizer Actions
     
     @objc private func handleTap(sender: UITapGestureRecognizer) {
         guard sender.state == .ended else {
@@ -140,83 +171,19 @@ class SnapshotView: UIView {
         }
         
         let point = sender.location(ofTouch: 0, in: sceneView)
-        let hitTestResult = sceneView.hitTest(point, options: nil)
-        if hitTestResult.isEmpty {
-            highlight(snapshotNode: nil)
-        } else {
-            for result in hitTestResult {
-                if let snapshotNode = findNearestAncestorSnapshotNode(node: result.node) {
-                    highlight(snapshotNode: snapshotNode)
-                    break
-                }
-            }
-        }
-        
+        highlight(snapshotNode: snapshotNodeAtPoint(point))
     }
     
-    private func highlight(snapshotNode: SCNNode?) {
-        if let previousNodes = highlightedNodes {
-            if snapshotNode == previousNodes.snapshotNode {
-                return
-            }
-            previousNodes.highlightNode?.removeFromParentNode()
-            previousNodes.highlightNode = nil
-            
-            delegate?.snapshotView(self, didDeselectElement: previousNodes.snapshot.element)
-            highlightedNodes = nil
-        }
-        
-        guard let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] else {
-            return
-        }
-        
-        let highlight = highlightNode(snapshot: nodes.snapshot, color: configuration.highlightColor)
-        nodes.snapshotNode?.addChildNode(highlight)
-        nodes.highlightNode = highlight
-        highlightedNodes = nodes
-        delegate?.snapshotView(self, didSelectElement: nodes.snapshot.element)
-    }
     
     @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
         }
-        
         let point = sender.location(ofTouch: 0, in: sceneView)
-        let hitTestResult = sceneView.hitTest(point, options: nil)
-        if hitTestResult.isEmpty {
-            showMenuForItems(items: getGlobalMenuItems(), point: point)
-        }
+        showMenu(snapshotNode: snapshotNodeAtPoint(point), point: point)
     }
     
-    private func showMenuForItems(items: [UIMenuItem], point: CGPoint) {
-        becomeFirstResponder()
-        let menuController = UIMenuController.shared
-        menuController.menuItems = items
-        menuController.setTargetRect(CGRect(origin: point, size: .zero), in: self)
-        menuController.setMenuVisible(true, animated: true)
-    }
-    
-    private func getGlobalMenuItems() -> [UIMenuItem] {
-        let headerItemTitle: String
-        if hideHeaderNodes {
-            headerItemTitle = NSLocalizedString("Show Headers", comment: "Show the headers above each UI element")
-        } else {
-            headerItemTitle = NSLocalizedString("Hide Headers", comment: "Hide the headers above each UI element")
-        }
-        
-        let borderItemTitle: String
-        if hideBorderNodes {
-            borderItemTitle = NSLocalizedString("Show Borders", comment: "Show the borders around each UI element")
-        } else {
-            borderItemTitle = NSLocalizedString("Hide Borders", comment: "Hide the borders around each UI element")
-        }
-        
-        return [
-            UIMenuItem(title: headerItemTitle, action: #selector(showHideHeaderNodes(sender:))),
-            UIMenuItem(title: borderItemTitle, action: #selector(showHideBorderNodes(sender:)))
-        ]
-    }
+    // MARK: Menu Item Actions
     
     @objc private func showHideHeaderNodes(sender: UIMenuItem) {
         hideHeaderNodes = !hideHeaderNodes
@@ -233,6 +200,29 @@ class SnapshotView: UIView {
             nodes.borderNode?.isHidden = hideBorderNodes
         }
     }
+    
+    @objc private func focus(sender: UIMenuItem) {
+        guard let element = menuAssociatedElement else {
+            return
+        }
+        delegate?.snapshotView(self, didFocusOnElement: element)
+    }
+    
+    @objc private func logDescription(sender: UIMenuItem) {
+        guard let element = menuAssociatedElement else {
+            return
+        }
+        print(element)
+    }
+    
+    @objc private func showDescription(sender: UIMenuItem) {
+        guard let element = menuAssociatedElement else {
+            return
+        }
+        delegate?.snapshotView(self, showDescriptionForElement: element)
+    }
+    
+    // MARK: UIControl Actions
     
     @objc private func handleSpacingSliderChanged(sender: UISlider) {
         if shouldHideHeaderNodes(zSpacing: sender.value) {
@@ -261,6 +251,94 @@ class SnapshotView: UIView {
     
     @objc private func didHideMenuItem(notification: Notification) {
         menuVisible = false
+        menuAssociatedElement = nil
+    }
+    
+    // MARK: Helper
+    
+    private func snapshotNodeAtPoint(_ point: CGPoint) -> SCNNode? {
+        let hitTestResult = sceneView.hitTest(point, options: nil)
+        for result in hitTestResult {
+            if let snapshotNode = findNearestAncestorSnapshotNode(node: result.node) {
+                return snapshotNode
+            }
+        }
+        return nil
+    }
+    
+    private func highlight(snapshotNode: SCNNode?) {
+        if let previousNodes = highlightedNodes {
+            if snapshotNode == previousNodes.snapshotNode {
+                return
+            }
+            previousNodes.highlightNode?.removeFromParentNode()
+            previousNodes.highlightNode = nil
+            
+            delegate?.snapshotView(self, didDeselectElement: previousNodes.snapshot.element)
+            highlightedNodes = nil
+            descriptionLabel.text = nil
+            setNeedsLayout()
+        }
+        
+        guard let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] else {
+            return
+        }
+        
+        let highlight = highlightNode(snapshot: nodes.snapshot, color: configuration.highlightColor)
+        nodes.snapshotNode?.addChildNode(highlight)
+        nodes.highlightNode = highlight
+        highlightedNodes = nodes
+        
+        descriptionLabel.text = nodes.snapshot.element.shortDescription
+        setNeedsLayout()
+        
+        delegate?.snapshotView(self, didSelectElement: nodes.snapshot.element)
+    }
+    
+    private func showMenu(snapshotNode: SCNNode?, point: CGPoint) {
+        let menuItems: [UIMenuItem]
+        if let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] {
+            menuAssociatedElement = nodes.snapshot.element
+            highlight(snapshotNode: snapshotNode)
+            menuItems = elementMenuItems()
+        } else {
+            menuItems = globalMenuItems()
+        }
+        
+        becomeFirstResponder()
+        let menuController = UIMenuController.shared
+        menuController.menuItems = menuItems
+        menuController.setTargetRect(CGRect(origin: point, size: .zero), in: self)
+        menuController.setMenuVisible(true, animated: true)
+    }
+    
+    private func globalMenuItems() -> [UIMenuItem] {
+        let headerItemTitle: String
+        if hideHeaderNodes {
+            headerItemTitle = NSLocalizedString("Show Headers", comment: "Show the headers above each UI element")
+        } else {
+            headerItemTitle = NSLocalizedString("Hide Headers", comment: "Hide the headers above each UI element")
+        }
+        
+        let borderItemTitle: String
+        if hideBorderNodes {
+            borderItemTitle = NSLocalizedString("Show Borders", comment: "Show the borders around each UI element")
+        } else {
+            borderItemTitle = NSLocalizedString("Hide Borders", comment: "Hide the borders around each UI element")
+        }
+        
+        return [
+            UIMenuItem(title: headerItemTitle, action: #selector(showHideHeaderNodes(sender:))),
+            UIMenuItem(title: borderItemTitle, action: #selector(showHideBorderNodes(sender:)))
+        ]
+    }
+    
+    private func elementMenuItems() -> [UIMenuItem] {
+        return [
+            UIMenuItem(title: NSLocalizedString("Focus", comment: "Focus on the hierarchy associated with this element"), action: #selector(focus(sender:))),
+            UIMenuItem(title: NSLocalizedString("Log Description", comment: "Log the description of this element"), action: #selector(logDescription(sender:))),
+            UIMenuItem(title: NSLocalizedString("Show Description", comment: "Show the description of this element"), action: #selector(showDescription(sender:))),
+        ]
     }
 }
 

@@ -59,5 +59,8 @@ public struct SnapshotViewConfiguration {
         return attributes
     }()
     
+    /// The font used to render the description for a selected element.
+    public var descriptionFont = UIFont.systemFont(ofSize: 14)
+    
     public init() {}
 }

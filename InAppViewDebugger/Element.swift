@@ -31,8 +31,9 @@ public struct ElementLabel {
 }
 
 /// A UI element that can be snapshotted.
-public protocol Element {
+public protocol Element: CustomStringConvertible {
     var label: ElementLabel { get }
+    var shortDescription: String { get }
     var frame: CGRect { get }
     var isHidden: Bool { get }
     var snapshotImage: CGImage? { get }

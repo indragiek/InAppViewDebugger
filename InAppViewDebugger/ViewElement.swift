@@ -46,6 +46,21 @@ public struct ViewElement: Element {
         })
     }
     
+    public var shortDescription: String {
+        guard let view = view else {
+            return ""
+        }
+        let frame = view.frame
+        return String(format: "%@: %p (%.1f, %.1f, %.1f, %.1f)", String(describing: type(of: view)), view, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
+    }
+    
+    public var description: String {
+        guard let view = view else {
+            return ""
+        }
+        return view.description
+    }
+    
     private weak var view: UIView?
     
     public init(view: UIView) {

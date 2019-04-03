@@ -19,11 +19,11 @@ public struct Snapshot {
     public let element: Element
     
     public init(element: Element) {
-        self.element = element
         self.label = element.label
         self.frame = element.frame
         self.isHidden = element.isHidden
         self.snapshotImage = element.snapshotImage
         self.children = element.children.map { Snapshot(element: $0) }
+        self.element = element
     }
 }
