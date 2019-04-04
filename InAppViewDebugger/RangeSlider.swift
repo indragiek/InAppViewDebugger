@@ -14,6 +14,25 @@ final class RangeSlider: UIControl {
     private let leftHandleImageView: UIImageView
     private let rightHandleImageView: UIImageView
     
+    private var isTrackingLeftHandle = false
+    private var isTrackingRightHandle = false
+    
+    public var allowableMinimumValue: Float = 0.0 {
+        didSet { setNeedsLayout() }
+    }
+    
+    public var allowableMaximumValue: Float = 1.0 {
+        didSet { setNeedsLayout() }
+    }
+    
+    public var minimumValue: Float = 0.0 {
+        didSet { setNeedsLayout() }
+    }
+    
+    public var maximumValue: Float = 1.0 {
+        didSet { setNeedsLayout() }
+    }
+    
     override init(frame: CGRect) {
         trackImageView = UIImageView()
         fillImageView = UIImageView()
@@ -21,8 +40,8 @@ final class RangeSlider: UIControl {
         rightHandleImageView = UIImageView()
         
         super.init(frame: frame)
+        isUserInteractionEnabled = true
         
-        addSubview(trackImageView)
         addSubview(fillImageView)
         addSubview(leftHandleImageView)
         addSubview(rightHandleImageView)
@@ -35,48 +54,143 @@ final class RangeSlider: UIControl {
     
     private func configureTrackImageView() {
         trackImageView.image = trackImage()
-        trackImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            trackImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            trackImageView.leadingAnchor.constraint(equalTo: leftHandleImageView.centerXAnchor),
-            trackImageView.trailingAnchor.constraint(equalTo: rightHandleImageView.centerXAnchor)
-        ])
+        trackImageView.isUserInteractionEnabled = false
+        trackImageView.autoresizingMask = []
+        addSubview(trackImageView)
     }
     
     private func configureFillImageView() {
         fillImageView.image = fillImage()
-        fillImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            fillImageView.centerYAnchor.constraint(equalTo: trackImageView.centerYAnchor),
-            fillImageView.leadingAnchor.constraint(equalTo: trackImageView.leadingAnchor),
-            fillImageView.trailingAnchor.constraint(equalTo: trackImageView.trailingAnchor)
-        ])
+        fillImageView.isUserInteractionEnabled = false
+        addSubview(fillImageView)
     }
     
     private func configureLeftHandleImageView() {
         leftHandleImageView.image = leftHandleImage()
-        leftHandleImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            leftHandleImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 2.0),
-            leftHandleImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-        ])
+        leftHandleImageView.isUserInteractionEnabled = false
+        addSubview(leftHandleImageView)
     }
     
     private func configureRightHandleImageView() {
         rightHandleImageView.image = rightHandleImage()
-        rightHandleImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            rightHandleImageView.centerYAnchor.constraint(equalTo: leftHandleImageView.centerYAnchor),
-            rightHandleImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        ])
+        rightHandleImageView.isUserInteractionEnabled = false
+        addSubview(rightHandleImageView)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: UIView
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: leftHandleImageView.image?.size.height ?? 0.0)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let leftHandleSize = leftHandleImageSize()
+        let rightHandleSize = rightHandleImageSize()
+        let trackSize = trackImageView.image?.size ?? .zero
+        
+        trackImageView.frame = CGRect(
+            x: leftHandleSize.width / 2.0,
+            y: bounds.midY - (trackSize.height / 2.0),
+            width: bounds.width - (leftHandleSize.width / 2.0) - (rightHandleSize.width / 2.0),
+            height: trackSize.height
+        )
+        
+        let delta = allowableMaximumValue - allowableMinimumValue
+        let minPercentage: Float
+        let maxPercentage: Float
+        if delta <= 0.0 {
+            minPercentage = 0.0
+            maxPercentage = 0.0
+        } else {
+            minPercentage = max(0.0, (minimumValue - allowableMinimumValue) / delta)
+            maxPercentage = max(minPercentage, (maximumValue - allowableMinimumValue) / delta)
+        }
+        
+        let sliderRangeWidth = bounds.width - leftHandleSize.width - rightHandleSize.width
+        
+        leftHandleImageView.frame = CGRect(
+            x: roundToNearestPixel(sliderRangeWidth * CGFloat(minPercentage)),
+            y: bounds.midY - (leftHandleSize.height / 2.0),
+            width: leftHandleSize.width,
+            height: leftHandleSize.height)
+        
+        rightHandleImageView.frame = CGRect(
+            x: roundToNearestPixel(leftHandleSize.width + sliderRangeWidth * CGFloat(maxPercentage)),
+            y: bounds.midY - (rightHandleSize.height / 2.0),
+            width: rightHandleSize.width,
+            height: rightHandleSize.height)
+        
+        fillImageView.frame = CGRect(
+            x: leftHandleImageView.frame.midX,
+            y: trackImageView.frame.minY,
+            width: rightHandleImageView.frame.midX - leftHandleImageView.frame.midX,
+            height: trackImageView.frame.height
+        )
+    }
+    
+    // MARK: UIControl
+    
+    override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        let location = touch.location(in: self)
+        if leftHandleImageView.frame.contains(location) {
+            isTrackingLeftHandle = true
+            isTrackingRightHandle = false
+            return true
+        } else if rightHandleImageView.frame.contains(location) {
+            isTrackingRightHandle = true
+            isTrackingLeftHandle = false
+            return true
+        }
+        return false
+    }
+    
+    override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        let location = touch.location(in: self)
+        if isTrackingLeftHandle {
+            minimumValue = min(max(allowableMinimumValue, valueAtX(location.x)), allowableMaximumValue)
+            setNeedsLayout()
+            layoutIfNeeded()
+            return true
+        } else if isTrackingRightHandle {
+            maximumValue = max(min(allowableMaximumValue, valueAtX(location.x)), allowableMinimumValue)
+            setNeedsLayout()
+            layoutIfNeeded()
+            return true
+        }
+        return false
+    }
+    
+    override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
+        isTrackingLeftHandle = false
+        isTrackingRightHandle = false
+    }
+    
+    // MARK: Private
+    
+    private func valueAtX(_ x: CGFloat) -> Float {
+        let minX = leftHandleImageSize().width
+        let maxX = bounds.width - rightHandleImageSize().width
+        let delta = maxX - minX
+        return Float((delta > 0.0) ? (x - minX) / delta : 0.0)
+    }
+    
+    private func leftHandleImageSize() -> CGSize {
+        return leftHandleImageView.image?.size ?? .zero
+    }
+    
+    private func rightHandleImageSize() -> CGSize {
+        return rightHandleImageView.image?.size ?? .zero
+    }
+    
+    private func roundToNearestPixel(_ value: CGFloat) -> CGFloat {
+        let scale = window?.contentScaleFactor ?? UIScreen.main.scale
+        return (scale > 0.0) ? (round(value * scale) / scale) : 0.0
     }
 }
 
