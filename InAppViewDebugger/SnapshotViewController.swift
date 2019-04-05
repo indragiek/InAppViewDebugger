@@ -9,11 +9,11 @@
 import UIKit
 
 /// View controller that renders a 3D snapshot view using SceneKit.
-public class SnapshotViewController: UIViewController, SnapshotViewDelegate {
+final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     private let snapshot: Snapshot
     private let configuration: SnapshotViewConfiguration
     
-    public init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
+    init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.snapshot = snapshot
         self.configuration = configuration
         super.init(nibName: nil, bundle: nil)
@@ -23,7 +23,7 @@ public class SnapshotViewController: UIViewController, SnapshotViewDelegate {
         return nil
     }
     
-    override public func loadView() {
+    override func loadView() {
         let snapshotView = SnapshotView(snapshot: snapshot, configuration: configuration)
         snapshotView.delegate = self
         self.view = snapshotView
