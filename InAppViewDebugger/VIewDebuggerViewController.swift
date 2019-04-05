@@ -32,14 +32,19 @@ public final class ViewDebuggerViewController: UIViewController {
         super.viewDidLoad()
         
         addChild(snapshotViewController)
-        view.addSubview(snapshotViewController.view)
-        snapshotViewController.didMove(toParent: self)
-    }
-    
-    override public func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
         
-        snapshotViewController.view.frame = view.bounds
+        if let snapshotView = snapshotViewController.view {
+            snapshotView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(snapshotView)
+            NSLayoutConstraint.activate([
+                snapshotView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                snapshotView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                snapshotView.topAnchor.constraint(equalTo: view.topAnchor),
+                snapshotView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            ])
+        }
+        
+        snapshotViewController.didMove(toParent: self)
     }
     
     private func configureSegmentedControl() {
