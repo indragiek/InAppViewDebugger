@@ -22,6 +22,7 @@ final class ViewDebuggerViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         configureSegmentedControl()
+        configureBarButtonItems()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -55,5 +56,15 @@ final class ViewDebuggerViewController: UIViewController {
         segmentedControl.sizeToFit()
         segmentedControl.selectedSegmentIndex = 0
         navigationItem.titleView = segmentedControl
+    }
+    
+    private func configureBarButtonItems() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(sender:)))
+    }
+    
+    // MARK: Actions
+    
+    @objc private func done(sender: UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
     }
 }
