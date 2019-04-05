@@ -8,7 +8,8 @@
 
 import UIKit
 
-public class SnapshotViewController: UIViewController {
+/// View controller that renders a 3D snapshot view using SceneKit.
+public class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     private let snapshot: Snapshot
     private let configuration: SnapshotViewConfiguration
     
@@ -23,6 +24,29 @@ public class SnapshotViewController: UIViewController {
     }
     
     override public func loadView() {
-        self.view = SnapshotView(snapshot: snapshot, configuration: configuration)
+        let snapshotView = SnapshotView(snapshot: snapshot, configuration: configuration)
+        snapshotView.delegate = self
+        self.view = snapshotView
+    }
+    
+    // MARK: SnapshotViewDelegate
+    
+    func snapshotView(_ snapshotView: SnapshotView, didSelectElement element: Element) {
+        
+    }
+    
+    func snapshotView(_ snapshotView: SnapshotView, didDeselectElement element: Element) {
+        
+    }
+
+    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot) {
+        let childSnapshotVC = SnapshotViewController(snapshot: snapshot, configuration: configuration)
+        navigationController?.pushViewController(childSnapshotVC, animated: true)
+    }
+    
+    func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element) {
+        let alert = UIAlertController(title: nil, message: element.description, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default))
+        present(alert, animated: true, completion: nil)
     }
 }

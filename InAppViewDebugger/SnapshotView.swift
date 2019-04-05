@@ -20,7 +20,7 @@ protocol SnapshotViewDelegate: AnyObject {
     /// Called when "Focus" is selected from the actions menu for an element, indicating
     /// that a new view should be presented that focuses only on the hierarchy from
     /// this element.
-    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElement element: Element)
+    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot)
     
     /// Called when "Show Description" is selected from the actions menu for an element,
     /// indicating that the delegate should present the description associated with the
@@ -53,7 +53,7 @@ class SnapshotView: UIView {
     private var hideHeaderNodes: Bool
     private var hideBorderNodes: Bool = false
     private var menuVisible: Bool = false
-    private var menuAssociatedElement: Element?
+    private var menuAssociatedSnapshot: Snapshot?
     
     // MARK: Initialization
     
@@ -224,21 +224,21 @@ class SnapshotView: UIView {
     }
     
     @objc private func focus(sender: UIMenuItem) {
-        guard let element = menuAssociatedElement else {
+        guard let snapshot = menuAssociatedSnapshot else {
             return
         }
-        delegate?.snapshotView(self, didFocusOnElement: element)
+        delegate?.snapshotView(self, didFocusOnElementWithSnapshot: snapshot)
     }
     
     @objc private func logDescription(sender: UIMenuItem) {
-        guard let element = menuAssociatedElement else {
+        guard let element = menuAssociatedSnapshot?.element else {
             return
         }
         print(element)
     }
     
     @objc private func showDescription(sender: UIMenuItem) {
-        guard let element = menuAssociatedElement else {
+        guard let element = menuAssociatedSnapshot?.element else {
             return
         }
         delegate?.snapshotView(self, showDescriptionForElement: element)
@@ -280,7 +280,7 @@ class SnapshotView: UIView {
     
     @objc private func didHideMenuItem(notification: Notification) {
         menuVisible = false
-        menuAssociatedElement = nil
+        menuAssociatedSnapshot = nil
     }
     
     // MARK: Helper
@@ -327,7 +327,7 @@ class SnapshotView: UIView {
     private func showMenu(snapshotNode: SCNNode?, point: CGPoint) {
         let menuItems: [UIMenuItem]
         if let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] {
-            menuAssociatedElement = nodes.snapshot.element
+            menuAssociatedSnapshot = nodes.snapshot
             highlight(snapshotNode: snapshotNode)
             menuItems = elementMenuItems()
         } else {
