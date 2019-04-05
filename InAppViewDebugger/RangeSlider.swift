@@ -171,12 +171,12 @@ final class RangeSlider: UIControl {
     override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         let location = touch.location(in: self)
         if isTrackingLeftHandle {
-            minimumValue = min(max(allowableMinimumValue, valueAtX(location.x)), allowableMaximumValue)
+            minimumValue = min(max(allowableMinimumValue, valueAtX(location.x)), maximumValue)
             setNeedsLayout()
             layoutIfNeeded()
             return true
         } else if isTrackingRightHandle {
-            maximumValue = max(min(allowableMaximumValue, valueAtX(location.x)), allowableMinimumValue)
+            maximumValue = max(min(allowableMaximumValue, valueAtX(location.x)), minimumValue)
             setNeedsLayout()
             layoutIfNeeded()
             return true
