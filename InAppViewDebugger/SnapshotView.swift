@@ -146,7 +146,7 @@ class SnapshotView: UIView {
         addSubview(descriptionLabel)
         
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 5.0),
+            descriptionLabel.bottomAnchor.constraint(equalTo: spacingSlider.topAnchor, constant: -5.0),
             descriptionLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 5.0),
             descriptionLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -5.0),
         ])
