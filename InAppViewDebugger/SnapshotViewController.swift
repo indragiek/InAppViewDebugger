@@ -16,7 +16,10 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.snapshot = snapshot
         self.configuration = configuration
+        
         super.init(nibName: nil, bundle: nil)
+        
+        navigationItem.title = snapshot.element.label.name
     }
     
     required init?(coder aDecoder: NSCoder) {
