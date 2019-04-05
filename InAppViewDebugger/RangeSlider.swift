@@ -194,8 +194,9 @@ final class RangeSlider: UIControl {
     private func valueAtX(_ x: CGFloat) -> Float {
         let minX = leftHandleImageSize().width
         let maxX = bounds.width - rightHandleImageSize().width
+        let cappedX = min(max(x, minX), maxX)
         let delta = maxX - minX
-        return Float((delta > 0.0) ? (x - minX) / delta : 0.0)
+        return Float((delta > 0.0) ? (cappedX - minX) / delta : 0.0) * (allowableMaximumValue - allowableMinimumValue) + allowableMinimumValue
     }
     
     private func leftHandleImageSize() -> CGSize {
