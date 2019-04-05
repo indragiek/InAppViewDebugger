@@ -25,6 +25,8 @@
 		03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A4283E2254829E00A5242D /* RangeSlider.swift */; };
 		03A428412257036300A5242D /* VIewDebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A428402257036300A5242D /* VIewDebuggerViewController.swift */; };
 		03A42843225703C500A5242D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A42842225703C500A5242D /* Configuration.swift */; };
+		03A4284522570DFE00A5242D /* InAppViewDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A4284422570DFE00A5242D /* InAppViewDebugger.swift */; };
+		03A42847225710CF00A5242D /* ViewControllerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A42846225710CF00A5242D /* ViewControllerUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,8 @@
 		03A4283E2254829E00A5242D /* RangeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
 		03A428402257036300A5242D /* VIewDebuggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIewDebuggerViewController.swift; sourceTree = "<group>"; };
 		03A42842225703C500A5242D /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		03A4284422570DFE00A5242D /* InAppViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppViewDebugger.swift; sourceTree = "<group>"; };
+		03A42846225710CF00A5242D /* ViewControllerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,16 +120,18 @@
 			children = (
 				034CC48F2251A1ED00953FC3 /* InAppViewDebugger.h */,
 				034CC4902251A1ED00953FC3 /* Info.plist */,
+				03A4283C225481CD00A5242D /* Assets.xcassets */,
+				03A42842225703C500A5242D /* Configuration.swift */,
 				034CC4972251A22200953FC3 /* Element.swift */,
-				034CC4982251A22200953FC3 /* ViewElement.swift */,
+				03A4284422570DFE00A5242D /* InAppViewDebugger.swift */,
+				03A4283E2254829E00A5242D /* RangeSlider.swift */,
 				034CC4B82251E8D800953FC3 /* Snapshot.swift */,
 				034CC4BA2251EA0000953FC3 /* SnapshotView.swift */,
 				034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */,
 				034CC4992251A22200953FC3 /* SnapshotViewController.swift */,
-				03A4283E2254829E00A5242D /* RangeSlider.swift */,
-				03A4283C225481CD00A5242D /* Assets.xcassets */,
 				03A428402257036300A5242D /* VIewDebuggerViewController.swift */,
-				03A42842225703C500A5242D /* Configuration.swift */,
+				034CC4982251A22200953FC3 /* ViewElement.swift */,
+				03A42846225710CF00A5242D /* ViewControllerUtils.swift */,
 			);
 			path = InAppViewDebugger;
 			sourceTree = "<group>";
@@ -260,10 +266,12 @@
 			files = (
 				034CC4BB2251EA0000953FC3 /* SnapshotView.swift in Sources */,
 				034CC49A2251A22200953FC3 /* Element.swift in Sources */,
+				03A42847225710CF00A5242D /* ViewControllerUtils.swift in Sources */,
 				034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */,
 				03A42843225703C500A5242D /* Configuration.swift in Sources */,
 				034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */,
 				03A428412257036300A5242D /* VIewDebuggerViewController.swift in Sources */,
+				03A4284522570DFE00A5242D /* InAppViewDebugger.swift in Sources */,
 				034CC49C2251A22200953FC3 /* SnapshotViewController.swift in Sources */,
 				03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */,
 				034CC49B2251A22200953FC3 /* ViewElement.swift in Sources */,

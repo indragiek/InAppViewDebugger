@@ -69,8 +69,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func snapshot(sender: UIBarButtonItem) {
-        let viewController = ViewDebuggerViewController(snapshot: Snapshot(element: ViewElement(view: view!.window!)))
-        navigationController?.pushViewController(viewController, animated: true)
+        presentViewDebugger()
     }
 }
 

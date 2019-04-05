@@ -68,15 +68,6 @@ public struct ViewElement: Element {
     }
 }
 
-fileprivate func getNearestAncestorViewController(responder: UIResponder) -> UIViewController? {
-    if let viewController = responder as? UIViewController {
-        return viewController
-    } else if let nextResponder = responder.next {
-        return getNearestAncestorViewController(responder: nextResponder)
-    }
-    return nil
-}
-
 fileprivate func getViewController(view: UIView) -> UIViewController? {
     if let viewController = getNearestAncestorViewController(responder: view), viewController.viewIfLoaded == view {
         return viewController

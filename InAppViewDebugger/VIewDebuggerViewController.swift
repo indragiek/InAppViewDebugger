@@ -9,12 +9,12 @@
 import UIKit
 
 /// Root view controller for the view debugger.
-public final class ViewDebuggerViewController: UIViewController {
+final class ViewDebuggerViewController: UIViewController {
     private let snapshot: Snapshot
     private let configuration: Configuration
     private let snapshotViewController: SnapshotViewController
     
-    public init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
+    init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
         self.snapshot = snapshot
         self.configuration = configuration
         self.snapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
@@ -28,7 +28,7 @@ public final class ViewDebuggerViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         addChild(snapshotViewController)
