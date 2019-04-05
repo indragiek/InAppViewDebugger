@@ -41,6 +41,14 @@ class SnapshotView: UIView {
     private let descriptionLabel: UILabel
     
     private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
+    private var maximumDepth = 0 {
+        didSet {
+            let maxDepthFloat = Float(maximumDepth)
+            depthSlider.allowableMaximumValue = maxDepthFloat
+            depthSlider.maximumValue = maxDepthFloat
+            depthSlider.minimumValue = 0.0
+        }
+    }
     private var highlightedNodes: SnapshotNodes?
     private var hideHeaderNodes: Bool
     private var hideBorderNodes: Bool = false
@@ -83,6 +91,7 @@ class SnapshotView: UIView {
                          snapshotIdentifierToNodesMap: &snapshotIdentifierToNodesMap,
                          configuration: configuration,
                          hideHeaderNodes: hideHeaderNodes)
+        maximumDepth = depth
         sceneView.scene = scene
         sceneView.allowsCameraControl = true
         sceneView.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +109,7 @@ class SnapshotView: UIView {
         spacingSlider.minimumValue = configuration.minimumZSpacing
         spacingSlider.maximumValue = configuration.maximumZSpacing
         spacingSlider.isContinuous = true
-        spacingSlider.addTarget(self, action: #selector(handleSpacingSliderChanged(sender:)), for: .valueChanged)
+        spacingSlider.addTarget(self, action: #selector(spacingSliderChanged(sender:)), for: .valueChanged)
         spacingSlider.setValue(configuration.zSpacing, animated: false)
         spacingSlider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(spacingSlider)
@@ -112,6 +121,12 @@ class SnapshotView: UIView {
     }
     
     private func configureDepthSlider() {
+        let maxDepthFloat = Float(maximumDepth)
+        depthSlider.allowableMinimumValue = 0.0
+        depthSlider.allowableMaximumValue = maxDepthFloat
+        depthSlider.minimumValue = 0.0
+        depthSlider.maximumValue = maxDepthFloat
+        depthSlider.addTarget(self, action: #selector(depthSliderChanged(sender:)), for: .valueChanged)
         depthSlider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(depthSlider)
         
@@ -231,7 +246,7 @@ class SnapshotView: UIView {
     
     // MARK: UIControl Actions
     
-    @objc private func handleSpacingSliderChanged(sender: UISlider) {
+    @objc private func spacingSliderChanged(sender: UISlider) {
         if shouldHideHeaderNodes(zSpacing: sender.value) {
             hideHeaderNodes = true
         }
@@ -247,6 +262,13 @@ class SnapshotView: UIView {
             if hideHeaderNodes, let headerNode = nodes.headerNode {
                 headerNode.isHidden = true
             }
+        }
+    }
+    
+    @objc private func depthSliderChanged(sender: RangeSlider) {
+        let range = Int(floor(sender.minimumValue))...Int(ceil(sender.maximumValue))
+        for (_, nodes) in snapshotIdentifierToNodesMap {
+            nodes.snapshotNode?.isHidden = !range.contains(maximumDepth - nodes.depth)
         }
     }
     
