@@ -8,6 +8,8 @@
 
 import UIKit
 
+/// A slider with two handles that allows for defining a range of values rather
+/// than UISlider, which only allows for a single value.
 final class RangeSlider: UIControl {
     private let trackImageView: UIImageView
     private let fillImageView: UIImageView
@@ -18,19 +20,35 @@ final class RangeSlider: UIControl {
     private var isTrackingRightHandle = false
     
     public var allowableMinimumValue: Float = 0.0 {
-        didSet { setNeedsLayout() }
+        didSet {
+            if minimumValue < allowableMaximumValue {
+                minimumValue = allowableMaximumValue
+            }
+            setNeedsLayout()
+        }
     }
     
     public var allowableMaximumValue: Float = 1.0 {
-        didSet { setNeedsLayout() }
+        didSet {
+            if maximumValue > allowableMaximumValue {
+                maximumValue = allowableMaximumValue
+            }
+            setNeedsLayout()
+        }
     }
     
     public var minimumValue: Float = 0.0 {
-        didSet { setNeedsLayout() }
+        didSet {
+            sendActions(for: .valueChanged)
+            setNeedsLayout()
+        }
     }
     
     public var maximumValue: Float = 1.0 {
-        didSet { setNeedsLayout() }
+        didSet {
+            sendActions(for: .valueChanged)
+            setNeedsLayout()
+        }
     }
     
     override init(frame: CGRect) {
