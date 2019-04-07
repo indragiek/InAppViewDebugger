@@ -10,13 +10,18 @@ import Foundation
 
 /// A view that draws one or more parallel vertical lines.
 final class ParallelLineView: UIView {
-    public var lineColor = UIColor.lightGray {
-        didSet {
-            setNeedsDisplay()
-        }
-    }
+    public var lineColors = [
+        UIColor(red: 0.816, green: 0.008, blue: 0.106, alpha: 1.000),
+        UIColor(red: 0.961, green: 0.651, blue: 0.137, alpha: 1.000),
+        UIColor(red: 0.290, green: 0.565, blue: 0.886, alpha: 1.000),
+        UIColor(red: 0.314, green: 0.886, blue: 0.757, alpha: 1.000),
+        UIColor(red: 0.494, green: 0.827, blue: 0.129, alpha: 1.000),
+        UIColor(red: 0.565, green: 0.075, blue: 0.996, alpha: 1.000),
+        UIColor(red: 0.741, green: 0.063, blue: 0.878, alpha: 1.000),
+        UIColor(red: 0.545, green: 0.341, blue: 0.165, alpha: 1.000)
+    ]
     
-    public var lineWidth: CGFloat = 0.5 {
+    public var lineWidth: CGFloat = 1.0 {
         didSet {
             setNeedsDisplay()
             invalidateIntrinsicContentSize()
@@ -51,8 +56,8 @@ final class ParallelLineView: UIView {
             return
         }
         var x: CGFloat = lineSpacing
-        lineColor.setFill()
-        (1...lineCount).forEach { _ in
+        (0..<lineCount).forEach { index in
+            lineColors[index % lineColors.count].setFill()
             let rect = CGRect(x: x, y: 0.0, width: lineWidth, height: bounds.height)
             UIRectFill(rect)
             x += lineWidth + lineSpacing
