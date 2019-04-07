@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		031202AB2259C04100DCC941 /* HierarchyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031202AA2259C04100DCC941 /* HierarchyViewController.swift */; };
+		031202AB2259C04100DCC941 /* HierarchyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031202AA2259C04100DCC941 /* HierarchyTableViewController.swift */; };
+		031202AD2259C80400DCC941 /* TreeTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031202AC2259C80400DCC941 /* TreeTableViewDataSource.swift */; };
+		031202AF2259CF8600DCC941 /* HierarchyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031202AE2259CF8600DCC941 /* HierarchyTableViewCell.swift */; };
 		034CC4912251A1ED00953FC3 /* InAppViewDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 034CC48F2251A1ED00953FC3 /* InAppViewDebugger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		034CC49A2251A22200953FC3 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4972251A22200953FC3 /* Element.swift */; };
 		034CC49B2251A22200953FC3 /* ViewElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4982251A22200953FC3 /* ViewElement.swift */; };
@@ -55,7 +57,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		031202AA2259C04100DCC941 /* HierarchyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyViewController.swift; sourceTree = "<group>"; };
+		031202AA2259C04100DCC941 /* HierarchyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyTableViewController.swift; sourceTree = "<group>"; };
+		031202AC2259C80400DCC941 /* TreeTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeTableViewDataSource.swift; sourceTree = "<group>"; };
+		031202AE2259CF8600DCC941 /* HierarchyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyTableViewCell.swift; sourceTree = "<group>"; };
 		034CC48C2251A1ED00953FC3 /* InAppViewDebugger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InAppViewDebugger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		034CC48F2251A1ED00953FC3 /* InAppViewDebugger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InAppViewDebugger.h; sourceTree = "<group>"; };
 		034CC4902251A1ED00953FC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -134,7 +138,9 @@
 				03A428402257036300A5242D /* VIewDebuggerViewController.swift */,
 				034CC4982251A22200953FC3 /* ViewElement.swift */,
 				03A42846225710CF00A5242D /* ViewControllerUtils.swift */,
-				031202AA2259C04100DCC941 /* HierarchyViewController.swift */,
+				031202AA2259C04100DCC941 /* HierarchyTableViewController.swift */,
+				031202AC2259C80400DCC941 /* TreeTableViewDataSource.swift */,
+				031202AE2259CF8600DCC941 /* HierarchyTableViewCell.swift */,
 			);
 			path = InAppViewDebugger;
 			sourceTree = "<group>";
@@ -273,12 +279,14 @@
 				034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */,
 				03A42843225703C500A5242D /* Configuration.swift in Sources */,
 				034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */,
-				031202AB2259C04100DCC941 /* HierarchyViewController.swift in Sources */,
+				031202AB2259C04100DCC941 /* HierarchyTableViewController.swift in Sources */,
 				03A428412257036300A5242D /* VIewDebuggerViewController.swift in Sources */,
 				03A4284522570DFE00A5242D /* InAppViewDebugger.swift in Sources */,
+				031202AF2259CF8600DCC941 /* HierarchyTableViewCell.swift in Sources */,
 				034CC49C2251A22200953FC3 /* SnapshotViewController.swift in Sources */,
 				03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */,
 				034CC49B2251A22200953FC3 /* ViewElement.swift in Sources */,
+				031202AD2259C80400DCC941 /* TreeTableViewDataSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

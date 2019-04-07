@@ -11,12 +11,12 @@ import UIKit
 /// Root view controller for the view debugger.
 final class ViewDebuggerViewController: UIViewController {
     private let snapshotViewController: SnapshotViewController
-    private let hierarchyViewController: HierarchyViewController
+    private let hierarchyViewController: HierarchyTableViewController
     private let pageViewController: UIPageViewController
     
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
         snapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
-        hierarchyViewController = HierarchyViewController(snapshot: snapshot)
+        hierarchyViewController = HierarchyTableViewController(snapshot: snapshot)
         pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         super.init(nibName: nil, bundle: nil)
