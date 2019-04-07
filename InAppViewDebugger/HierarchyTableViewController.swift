@@ -20,9 +20,11 @@ class HierarchyTableViewController: UITableViewController {
         self.snapshot = snapshot
         self.dataSource = TreeTableViewDataSource(tree: snapshot) { (tableView, value, depth, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
-            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(style: .subtitle, reuseIdentifier: reuseIdentifier)
-            cell.textLabel?.text = value.label.name
-            cell.detailTextLabel?.text = "\(value.frame)"
+            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
+            cell.nameLabel.text = value.label.name
+            let frame = value.frame
+            cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
+            cell.depth = depth
             return cell
         }
         super.init(nibName: nil, bundle: nil)
@@ -35,6 +37,7 @@ class HierarchyTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = dataSource
+        tableView.separatorStyle = .none
         tableView.reloadData()
     }
 }
