@@ -18,21 +18,14 @@ final class HierarchyTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    private let lineView: ParallelLineView = {
+    let lineView: ParallelLineView = {
         let lineView = ParallelLineView()
         lineView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         lineView.translatesAutoresizingMaskIntoConstraints = false
         return lineView
     }()
-    
     let nameLabel = UILabel()
     let frameLabel = UILabel()
-    
-    public var depth: Int = 0 {
-        didSet {
-            lineView.lineCount = depth
-        }
-    }
     
     init(reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)

@@ -21,10 +21,23 @@ class HierarchyTableViewController: UITableViewController {
         self.dataSource = TreeTableViewDataSource(tree: snapshot) { (tableView, value, depth, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
             let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
+            
+            let baseFont = UIFont.preferredFont(forTextStyle: .body)
+            switch value.label.classification {
+            case .normal:
+                cell.nameLabel.font = baseFont
+            case .important:
+                if let descriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitBold) {
+                    cell.nameLabel.font = UIFont(descriptor: descriptor, size: baseFont.pointSize)
+                } else {
+                    cell.nameLabel.font = baseFont
+                }
+            }
             cell.nameLabel.text = value.label.name
+            
             let frame = value.frame
             cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-            cell.depth = depth
+            cell.lineView.lineCount = depth
             return cell
         }
         super.init(nibName: nil, bundle: nil)
