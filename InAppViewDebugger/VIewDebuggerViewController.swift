@@ -10,14 +10,14 @@ import UIKit
 
 /// Root view controller for the view debugger.
 final class ViewDebuggerViewController: UIViewController {
-    private let snapshot: Snapshot
-    private let configuration: Configuration
     private let snapshotViewController: SnapshotViewController
+    private let hierarchyViewController: HierarchyViewController
+    private let pageViewController: UIPageViewController
     
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
-        self.snapshot = snapshot
-        self.configuration = configuration
-        self.snapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+        snapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+        hierarchyViewController = HierarchyViewController(snapshot: snapshot)
+        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         super.init(nibName: nil, bundle: nil)
         
@@ -32,20 +32,21 @@ final class ViewDebuggerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addChild(snapshotViewController)
+        selectViewController(index: 0)
+        addChild(pageViewController)
         
-        if let snapshotView = snapshotViewController.view {
-            snapshotView.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(snapshotView)
+        if let pageView = pageViewController.view {
+            pageView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(pageView)
             NSLayoutConstraint.activate([
-                snapshotView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                snapshotView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                snapshotView.topAnchor.constraint(equalTo: view.topAnchor),
-                snapshotView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                pageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                pageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                pageView.topAnchor.constraint(equalTo: view.topAnchor),
+                pageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             ])
         }
         
-        snapshotViewController.didMove(toParent: self)
+        pageViewController.didMove(toParent: self)
     }
     
     private func configureSegmentedControl() {
@@ -55,6 +56,7 @@ final class ViewDebuggerViewController: UIViewController {
         ])
         segmentedControl.sizeToFit()
         segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
         navigationItem.titleView = segmentedControl
     }
     
@@ -64,7 +66,25 @@ final class ViewDebuggerViewController: UIViewController {
     
     // MARK: Actions
     
+    @objc private func segmentChanged(sender: UISegmentedControl) {
+        selectViewController(index: sender.selectedSegmentIndex)
+    }
+    
     @objc private func done(sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: Private
+    
+    private func selectViewController(index: Int) {
+        switch index {
+        case 0:
+            pageViewController.setViewControllers([snapshotViewController], direction: .reverse, animated: false, completion: nil)
+        case 1:
+            pageViewController.setViewControllers([hierarchyViewController], direction: .forward, animated: false, completion: nil)
+        default:
+            fatalError("Invalid view controller index \(index)")
+            break
+        }
     }
 }
