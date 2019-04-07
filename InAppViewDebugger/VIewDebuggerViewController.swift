@@ -12,15 +12,14 @@ import UIKit
 final class ViewDebuggerViewController: UIViewController {
     private let snapshot: Snapshot
     private let configuration: Configuration
-    private let pageViewController: UIPageViewController
     
+    private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     private lazy var snapshotViewController: SnapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
     private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot)
     
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
         self.snapshot = snapshot
         self.configuration = configuration
-        self.pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         super.init(nibName: nil, bundle: nil)
         

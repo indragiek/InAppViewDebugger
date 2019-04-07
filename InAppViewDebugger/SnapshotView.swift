@@ -35,10 +35,10 @@ class SnapshotView: UIView {
     
     private let configuration: SnapshotViewConfiguration
     private let snapshot: Snapshot
-    private let sceneView: SCNView
-    private let spacingSlider: UISlider
-    private let depthSlider: RangeSlider
-    private let descriptionLabel: UILabel
+    private let sceneView = SCNView()
+    private let spacingSlider = UISlider()
+    private let depthSlider = RangeSlider()
+    private let descriptionLabel = UILabel()
     
     private var snapshotIdentifierToNodesMap = [String: SnapshotNodes]()
     private var maximumDepth = 0 {
@@ -60,12 +60,7 @@ class SnapshotView: UIView {
     public init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.configuration = configuration
         self.snapshot = snapshot
-        
-        sceneView = SCNView()
-        spacingSlider = UISlider()
-        depthSlider = RangeSlider()
-        descriptionLabel = UILabel()
-        hideHeaderNodes = shouldHideHeaderNodes(zSpacing: configuration.zSpacing)
+        self.hideHeaderNodes = shouldHideHeaderNodes(zSpacing: configuration.zSpacing)
         
         super.init(frame: .zero)
         

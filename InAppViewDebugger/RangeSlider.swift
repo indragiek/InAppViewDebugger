@@ -11,10 +11,10 @@ import UIKit
 /// A slider with two handles that allows for defining a range of values rather
 /// than UISlider, which only allows for a single value.
 final class RangeSlider: UIControl {
-    private let trackImageView: UIImageView
-    private let fillImageView: UIImageView
-    private let leftHandleImageView: UIImageView
-    private let rightHandleImageView: UIImageView
+    private let trackImageView = UIImageView()
+    private let fillImageView = UIImageView()
+    private let leftHandleImageView = UIImageView()
+    private let rightHandleImageView = UIImageView()s
     
     private var isTrackingLeftHandle = false
     private var isTrackingRightHandle = false
@@ -52,11 +52,6 @@ final class RangeSlider: UIControl {
     }
     
     override init(frame: CGRect) {
-        trackImageView = UIImageView()
-        fillImageView = UIImageView()
-        leftHandleImageView = UIImageView()
-        rightHandleImageView = UIImageView()
-        
         super.init(frame: frame)
         isUserInteractionEnabled = true
         
