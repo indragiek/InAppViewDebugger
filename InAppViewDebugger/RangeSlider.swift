@@ -14,7 +14,7 @@ final class RangeSlider: UIControl {
     private let trackImageView = UIImageView()
     private let fillImageView = UIImageView()
     private let leftHandleImageView = UIImageView()
-    private let rightHandleImageView = UIImageView()s
+    private let rightHandleImageView = UIImageView()
     
     private var isTrackingLeftHandle = false
     private var isTrackingRightHandle = false
