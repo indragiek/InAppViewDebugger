@@ -50,7 +50,7 @@ final class ParallelLineView: UIView {
         guard lineCount > 0 else {
             return
         }
-        var x: CGFloat = 0.0
+        var x: CGFloat = lineSpacing
         lineColor.setFill()
         (1...lineCount).forEach { _ in
             let rect = CGRect(x: x, y: 0.0, width: lineWidth, height: bounds.height)
@@ -63,6 +63,6 @@ final class ParallelLineView: UIView {
         guard lineCount > 0 else {
             return CGSize(width: 0.0, height: UIView.noIntrinsicMetric)
         }
-        return CGSize(width: (lineWidth * CGFloat(lineCount)) + (lineSpacing * CGFloat(lineCount - 1)), height: UIView.noIntrinsicMetric)
+        return CGSize(width: CGFloat(lineCount) * (lineWidth + lineSpacing), height: UIView.noIntrinsicMetric)
     }
 }
