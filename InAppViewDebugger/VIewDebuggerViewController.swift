@@ -10,14 +10,17 @@ import UIKit
 
 /// Root view controller for the view debugger.
 final class ViewDebuggerViewController: UIViewController {
-    private let snapshotViewController: SnapshotViewController
-    private let hierarchyViewController: HierarchyTableViewController
+    private let snapshot: Snapshot
+    private let configuration: Configuration
     private let pageViewController: UIPageViewController
     
+    private lazy var snapshotViewController: SnapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+    private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot)
+    
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
-        snapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
-        hierarchyViewController = HierarchyTableViewController(snapshot: snapshot)
-        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        self.snapshot = snapshot
+        self.configuration = configuration
+        self.pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         super.init(nibName: nil, bundle: nil)
         
