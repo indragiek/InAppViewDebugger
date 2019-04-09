@@ -47,7 +47,7 @@ final class HierarchyTableViewCell: UITableViewCell {
     
     lazy var subtreeButton: UIButton = { [unowned self] in
         let button = UIButton(type: .custom)
-        let color = UIColor(white: 0.0, alpha: 0.25)
+        let color = UIColor(white: 0.2, alpha: 1.0)
         button.setBackgroundImage(colorImage(color: UIColor(white: 0.0, alpha: 0.1)), for: .highlighted)
         button.setTitle(NSLocalizedString("Subtree", comment: "Show the subtree starting at this element"), for: .normal)
         button.setTitleColor(color, for: .normal)
@@ -55,7 +55,7 @@ final class HierarchyTableViewCell: UITableViewCell {
         let disclosureImage = UIImage(named: "DisclosureIndicator", in: Bundle(for: HierarchyTableViewCell.self), compatibleWith: nil)
         button.setImage(disclosureImage, for: .normal)
         button.layer.cornerRadius = 4.0
-        button.layer.borderWidth = 1.5
+        button.layer.borderWidth = 1.0
         button.layer.borderColor = color.cgColor
         button.layer.masksToBounds = true
         

@@ -29,14 +29,12 @@ public struct HierarchyViewConfiguration {
     /// If the depth of a node exceeds the number of colors in this array,
     /// the colors will repeat from the beginning.
     public var lineColors = [
-        UIColor(red: 0.816, green: 0.008, blue: 0.106, alpha: 1.000),
-        UIColor(red: 0.961, green: 0.651, blue: 0.137, alpha: 1.000),
-        UIColor(red: 0.290, green: 0.565, blue: 0.886, alpha: 1.000),
-        UIColor(red: 0.314, green: 0.886, blue: 0.757, alpha: 1.000),
-        UIColor(red: 0.494, green: 0.827, blue: 0.129, alpha: 1.000),
-        UIColor(red: 0.565, green: 0.075, blue: 0.996, alpha: 1.000),
-        UIColor(red: 0.741, green: 0.063, blue: 0.878, alpha: 1.000),
-        UIColor(red: 0.545, green: 0.341, blue: 0.165, alpha: 1.000)
+        UIColor(white: 0.2, alpha: 1.0),
+        UIColor(white: 0.4, alpha: 1.0),
+        UIColor(white: 0.6, alpha: 1.0),
+        UIColor(white: 0.8, alpha: 1.0),
+        UIColor(white: 0.9, alpha: 1.0),
+        UIColor(white: 0.95, alpha: 1.0)
     ]
     
     /// The width of the lines drawn to show the depth of the tree.
