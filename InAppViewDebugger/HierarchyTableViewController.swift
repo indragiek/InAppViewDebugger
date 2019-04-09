@@ -10,15 +10,22 @@ import UIKit
 
 extension Snapshot: Tree {}
 
-class HierarchyTableViewController: UITableViewController {
+class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate {
     private static let ReuseIdentifier = "HierarchyTableViewCell"
     
     private let snapshot: Snapshot
-    private let dataSource: TreeTableViewDataSource<Snapshot>
+    private let configuration: HierarchyViewConfiguration
+    private var dataSource: TreeTableViewDataSource<Snapshot>?
     
     init(snapshot: Snapshot, configuration: HierarchyViewConfiguration) {
         self.snapshot = snapshot
-        self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { (tableView, value, depth, isCollapsed) in
+        self.configuration = configuration
+        
+        super.init(nibName: nil, bundle: nil)
+        
+        navigationItem.title = snapshot.element.label.name
+        
+        self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { [weak self] (tableView, value, depth, indexPath, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
             let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
             
@@ -42,10 +49,11 @@ class HierarchyTableViewController: UITableViewController {
             cell.lineView.lineColors = configuration.lineColors
             cell.lineView.lineWidth = configuration.lineWidth
             cell.lineView.lineSpacing = configuration.lineSpacing
-            cell.subtreeButton.isHidden = depth < (configuration.maxDepth ?? Int.max)
+            cell.subtreeButton.isHidden = value.children.isEmpty || depth < (configuration.maxDepth ?? Int.max)
+            cell.indexPath = indexPath
+            cell.delegate = self
             return cell
         }
-        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -57,5 +65,15 @@ class HierarchyTableViewController: UITableViewController {
         tableView.dataSource = dataSource
         tableView.separatorStyle = .none
         tableView.reloadData()
+    }
+    
+    // MARK: HierarchyTableViewCellDelegate
+    
+    func hierarchyTableViewCellDidTapSubtree(cell: HierarchyTableViewCell) {
+        guard let indexPath = cell.indexPath, let snapshot = dataSource?.value(atIndexPath: indexPath) else {
+            return
+        }
+        let subtreeViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration)
+        navigationController?.pushViewController(subtreeViewController, animated: true)
     }
 }

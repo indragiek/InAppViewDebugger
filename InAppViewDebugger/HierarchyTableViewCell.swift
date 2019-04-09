@@ -8,13 +8,19 @@
 
 import UIKit
 
+protocol HierarchyTableViewCellDelegate: AnyObject {
+    func hierarchyTableViewCellDidTapSubtree(cell: HierarchyTableViewCell)
+}
+
 final class HierarchyTableViewCell: UITableViewCell {
-    private let labelStackView: UIStackView = {
+    private lazy var labelStackView: UIStackView = { [unowned self] in
         let stackView = UIStackView()
         stackView.spacing = 3.0
         stackView.axis = .vertical
         stackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(nameLabel)
+        stackView.addArrangedSubview(frameLabel)
         return stackView
     }()
     
@@ -39,7 +45,7 @@ final class HierarchyTableViewCell: UITableViewCell {
         return label
     }()
     
-    let subtreeButton: UIButton = {
+    lazy var subtreeButton: UIButton = { [unowned self] in
         let button = UIButton(type: .custom)
         let color = UIColor(white: 0.0, alpha: 0.25)
         button.setBackgroundImage(colorImage(color: UIColor(white: 0.0, alpha: 0.1)), for: .highlighted)
@@ -64,8 +70,14 @@ final class HierarchyTableViewCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
+        button.addTarget(self, action: #selector(didTapSubtree(sender:)), for: .touchUpInside)
+        
         return button
     }()
+    
+    var indexPath: IndexPath?
+    
+    weak var delegate: HierarchyTableViewCellDelegate?
     
     init(reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
@@ -79,9 +91,6 @@ final class HierarchyTableViewCell: UITableViewCell {
         contentView.addSubview(lineView)
         contentView.addSubview(labelStackView)
         contentView.addSubview(subtreeButton)
-        
-        labelStackView.addArrangedSubview(nameLabel)
-        labelStackView.addArrangedSubview(frameLabel)
 
         let marginsGuide = contentView.layoutMarginsGuide
         NSLayoutConstraint.activate([
@@ -98,6 +107,12 @@ final class HierarchyTableViewCell: UITableViewCell {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    
+    @objc private func didTapSubtree(sender: UIButton) {
+        delegate?.hierarchyTableViewCellDidTapSubtree(cell: self)
     }
 }
 

@@ -13,7 +13,7 @@ protocol Tree {
 }
 
 final class TreeTableViewDataSource<TreeType: Tree>: NSObject, UITableViewDataSource {
-    typealias CellFactory = (UITableView /* tableView */, TreeType /* value */, Int /* depth */, Bool /* isCollapsed */) -> UITableViewCell
+    typealias CellFactory = (UITableView /* tableView */, TreeType /* value */, Int /* depth */, IndexPath /* indexPath */, Bool /* isCollapsed */) -> UITableViewCell
     
     private let tree: TreeType
     private let cellFactory: CellFactory
@@ -23,6 +23,10 @@ final class TreeTableViewDataSource<TreeType: Tree>: NSObject, UITableViewDataSo
         self.tree = tree
         self.cellFactory = cellFactory
         self.flattenedTree = flatten(tree: tree, depth: 0, maxDepth: maxDepth)
+    }
+    
+    public func value(atIndexPath indexPath: IndexPath) -> TreeType {
+        return flattenedTree[indexPath.row].value
     }
     
     // MARK: UITableViewDataSource
@@ -37,7 +41,7 @@ final class TreeTableViewDataSource<TreeType: Tree>: NSObject, UITableViewDataSo
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let tree = flattenedTree[indexPath.row]
-        return cellFactory(tableView, tree.value, tree.depth, tree.isCollapsed)
+        return cellFactory(tableView, tree.value, tree.depth, indexPath, tree.isCollapsed)
     }
 }
 
