@@ -12,6 +12,7 @@ protocol SnapshotViewControllerDelegate: AnyObject {
     func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot)
     func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot)
     func snapshotViewController(_ viewController: SnapshotViewController, didFocusOnSnapshot snapshot: Snapshot)
+    func snapshotViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: SnapshotViewController)
 }
 
 /// View controller that renders a 3D snapshot view using SceneKit.
@@ -44,13 +45,14 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if isMovingFromParent {
             snapshotView?.deselectAll()
+            delegate?.snapshotViewControllerWillNavigateBackToPreviousSnapshot(self)
         }
     }
     
@@ -74,6 +76,15 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         }
     }
     
+    func focus(snapshot: Snapshot) {
+        let topViewController = topSnapshotViewController()
+        if topViewController == self {
+            pushSubtreeViewController(snapshot: snapshot, callDelegate: false)
+        } else {
+            topViewController.focus(snapshot: snapshot)
+        }
+    }
+    
     // MARK: SnapshotViewDelegate
     
     func snapshotView(_ snapshotView: SnapshotView, didSelectSnapshot snapshot: Snapshot) {
@@ -85,10 +96,7 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
     }
 
     func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot) {
-        snapshotView.deselectAll()
-        let subViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration)
-        subViewController.delegate = self
-        navigationController?.pushViewController(subViewController, animated: true)
+        pushSubtreeViewController(snapshot: snapshot, callDelegate: true)
     }
     
     func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element) {
@@ -111,9 +119,23 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
     }
     
+    func snapshotViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: SnapshotViewController) {
+        delegate?.snapshotViewControllerWillNavigateBackToPreviousSnapshot(self)
+    }
+    
     // MARK: Private
     
-    func topSnapshotViewController() -> SnapshotViewController {
+    private func pushSubtreeViewController(snapshot: Snapshot, callDelegate: Bool) {
+        snapshotView?.deselectAll()
+        let subtreeViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration)
+        subtreeViewController.delegate = self
+        navigationController?.pushViewController(subtreeViewController, animated: true)
+        if callDelegate {
+            delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+        }
+    }
+    
+    private func topSnapshotViewController() -> SnapshotViewController {
         if let snapshotViewController = navigationController?.topViewController as? SnapshotViewController {
             return snapshotViewController
         }

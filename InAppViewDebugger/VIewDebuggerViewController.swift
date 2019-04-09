@@ -84,7 +84,12 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     }
     
     func snapshotViewController(_ viewController: SnapshotViewController, didFocusOnSnapshot snapshot: Snapshot) {
-        hierarchyViewController.rootSnapshot = snapshot
+        hierarchyNavigationController.popToRootViewController(animated: false)
+        hierarchyViewController.focus(snapshot: snapshot)
+    }
+    
+    func snapshotViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: SnapshotViewController) {
+        hierarchyNavigationController.popViewController(animated: false)
     }
     
     // MARK: HierarchyTableViewControllerDelegate
@@ -95,6 +100,14 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     
     func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didDeselectSnapshot snapshot: Snapshot) {
         snapshotViewController.deselect(snapshot: snapshot)
+    }
+    
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didFocusOnSnapshot snapshot: Snapshot) {
+        snapshotViewController.focus(snapshot: snapshot)
+    }
+    
+    func hierarchyTableViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: HierarchyTableViewController) {
+        snapshotNavigationController.popViewController(animated: false)
     }
     
     // MARK: Private
