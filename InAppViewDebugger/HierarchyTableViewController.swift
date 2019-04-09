@@ -64,7 +64,6 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         super.viewDidLoad()
         tableView.dataSource = dataSource
         tableView.separatorStyle = .none
-        tableView.reloadData()
     }
     
     // MARK: HierarchyTableViewCellDelegate
