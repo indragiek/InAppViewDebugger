@@ -14,8 +14,20 @@ final class ViewDebuggerViewController: UIViewController {
     private let configuration: Configuration
     
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    
     private lazy var snapshotViewController: SnapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+    private lazy var snapshotNavigationController: UINavigationController = {
+        let navigationController = UINavigationController(rootViewController: snapshotViewController)
+        navigationController.navigationBar.isHidden = true
+        return navigationController
+    }()
+    
     private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration.hierarchyViewConfiguration)
+    private lazy var hierarchyNavigationController: UINavigationController = {
+        let navigationController = UINavigationController(rootViewController: hierarchyViewController)
+        navigationController.navigationBar.isHidden = true
+        return navigationController
+    }()
     
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
         self.snapshot = snapshot
@@ -81,9 +93,9 @@ final class ViewDebuggerViewController: UIViewController {
     private func selectViewController(index: Int) {
         switch index {
         case 0:
-            pageViewController.setViewControllers([snapshotViewController], direction: .reverse, animated: false, completion: nil)
+            pageViewController.setViewControllers([snapshotNavigationController], direction: .reverse, animated: false, completion: nil)
         case 1:
-            pageViewController.setViewControllers([hierarchyViewController], direction: .forward, animated: false, completion: nil)
+            pageViewController.setViewControllers([hierarchyNavigationController], direction: .forward, animated: false, completion: nil)
         default:
             fatalError("Invalid view controller index \(index)")
             break
