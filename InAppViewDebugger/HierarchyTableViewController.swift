@@ -49,7 +49,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             cell.lineView.lineColors = configuration.lineColors
             cell.lineView.lineWidth = configuration.lineWidth
             cell.lineView.lineSpacing = configuration.lineSpacing
-            cell.subtreeButton.isHidden = value.children.isEmpty || depth < (configuration.maxDepth ?? Int.max)
+            cell.showSubtreeButton = !value.children.isEmpty && depth >= (configuration.maxDepth ?? Int.max)
             cell.indexPath = indexPath
             cell.delegate = self
             return cell

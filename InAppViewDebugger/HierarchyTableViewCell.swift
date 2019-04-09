@@ -45,7 +45,7 @@ final class HierarchyTableViewCell: UITableViewCell {
         return label
     }()
     
-    lazy var subtreeButton: UIButton = { [unowned self] in
+    private lazy var subtreeButton: UIButton = { [unowned self] in
         let button = UIButton(type: .custom)
         let color = UIColor(white: 0.2, alpha: 1.0)
         button.setBackgroundImage(colorImage(color: UIColor(white: 0.0, alpha: 0.1)), for: .highlighted)
@@ -75,6 +75,15 @@ final class HierarchyTableViewCell: UITableViewCell {
         return button
     }()
     
+    // Used to hide/unhide the subtree button.
+    private var subtreeLabelWidthConstraint: NSLayoutConstraint?
+    
+    var showSubtreeButton = false {
+        didSet {
+            subtreeLabelWidthConstraint?.isActive = !showSubtreeButton
+        }
+    }
+    
     var indexPath: IndexPath?
     
     weak var delegate: HierarchyTableViewCellDelegate?
@@ -103,6 +112,7 @@ final class HierarchyTableViewCell: UITableViewCell {
             subtreeButton.centerYAnchor.constraint(equalTo: marginsGuide.centerYAnchor),
             subtreeButton.trailingAnchor.constraint(equalTo: marginsGuide.trailingAnchor),
         ])
+        subtreeLabelWidthConstraint = subtreeButton.widthAnchor.constraint(equalToConstant: 0.0)
     }
 
     required init?(coder aDecoder: NSCoder) {
