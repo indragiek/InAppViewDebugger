@@ -9,7 +9,7 @@
 import UIKit
 
 /// Root view controller for the view debugger.
-final class ViewDebuggerViewController: UIViewController, SnapshotViewControllerDelegate {
+final class ViewDebuggerViewController: UIViewController, SnapshotViewControllerDelegate, HierarchyTableViewControllerDelegate {
     private let snapshot: Snapshot
     private let configuration: Configuration
     
@@ -27,7 +27,11 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         return navigationController
     }()
     
-    private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration.hierarchyViewConfiguration)
+    private lazy var hierarchyViewController: HierarchyTableViewController = {
+        let viewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration.hierarchyViewConfiguration)
+        viewController.delegate = self
+        return viewController
+    }()
     
     private lazy var hierarchyNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: hierarchyViewController)
@@ -77,6 +81,16 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     
     func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot) {
         hierarchyViewController.deselectRow(forSnapshot: snapshot)
+    }
+    
+    // MARK: HierarchyTableViewControllerDelegate
+    
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didSelectSnapshot snapshot: Snapshot) {
+        snapshotViewController.select(snapshot: snapshot)
+    }
+    
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didDeselectSnapshot snapshot: Snapshot) {
+        snapshotViewController.deselect(snapshot: snapshot)
     }
     
     // MARK: Private

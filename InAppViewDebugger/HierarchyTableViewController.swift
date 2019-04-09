@@ -8,7 +8,10 @@
 
 import UIKit
 
-extension Snapshot: Tree {}
+protocol HierarchyTableViewControllerDelegate: AnyObject {
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didSelectSnapshot snapshot: Snapshot)
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didDeselectSnapshot snapshot: Snapshot)
+}
 
 class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate {
     private static let ReuseIdentifier = "HierarchyTableViewCell"
@@ -35,6 +38,8 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             }
         }
     }
+    
+    weak var delegate: HierarchyTableViewControllerDelegate?
     
     init(snapshot: Snapshot, configuration: HierarchyViewConfiguration) {
         self.snapshot = snapshot
@@ -77,6 +82,22 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             return
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    // MARK: UITableViewDelegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let snapshot = dataSource?.value(atIndexPath: indexPath) else {
+            return
+        }
+        delegate?.hierarchyTableViewController(self, didSelectSnapshot: snapshot)
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let snapshot = dataSource?.value(atIndexPath: indexPath) else {
+            return
+        }
+        delegate?.hierarchyTableViewController(self, didDeselectSnapshot: snapshot)
     }
     
     // MARK: HierarchyTableViewCellDelegate
@@ -123,3 +144,5 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         }
     }
 }
+
+extension Snapshot: Tree {}

@@ -54,6 +54,7 @@ class SnapshotView: UIView {
     private var hideBorderNodes: Bool = false
     private var menuVisible: Bool = false
     private var menuAssociatedSnapshot: Snapshot?
+    private var suppressSelectionEvents = false
     
     // MARK: Initialization
     
@@ -165,6 +166,25 @@ class SnapshotView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: API
+    
+    func select(snapshot: Snapshot) {
+        guard let node = snapshotIdentifierToNodesMap[snapshot.identifier]?.snapshotNode else {
+            return
+        }
+        suppressSelectionEvents = true
+        highlight(snapshotNode: node)
+        suppressSelectionEvents = false
+    }
+    
+    func deselect(snapshot: Snapshot) {
+        if highlightedNodes?.snapshot === snapshot {
+            suppressSelectionEvents = true
+            highlight(snapshotNode: nil)
+            suppressSelectionEvents = false
+        }
     }
     
     // MARK: UIResponder
@@ -298,7 +318,7 @@ class SnapshotView: UIView {
             previousNodes.highlightNode?.removeFromParentNode()
             previousNodes.highlightNode = nil
             
-            if snapshotNode == nil {
+            if !suppressSelectionEvents && snapshotNode == nil {
                 delegate?.snapshotView(self, didDeselectSnapshot: previousNodes.snapshot)
             }
             highlightedNodes = nil
@@ -318,7 +338,9 @@ class SnapshotView: UIView {
         descriptionLabel.text = nodes.snapshot.element.shortDescription
         setNeedsLayout()
         
-        delegate?.snapshotView(self, didSelectSnapshot: nodes.snapshot)
+        if !suppressSelectionEvents {
+            delegate?.snapshotView(self, didSelectSnapshot: nodes.snapshot)
+        }
     }
     
     private func showMenu(snapshotNode: SCNNode?, point: CGPoint) {

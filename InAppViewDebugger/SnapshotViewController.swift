@@ -18,6 +18,7 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     private let snapshot: Snapshot
     private let configuration: SnapshotViewConfiguration
     
+    private var snapshotView: SnapshotView?
     weak var delegate: SnapshotViewControllerDelegate?
     
     init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
@@ -36,7 +37,18 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     override func loadView() {
         let snapshotView = SnapshotView(snapshot: snapshot, configuration: configuration)
         snapshotView.delegate = self
+        self.snapshotView = snapshotView
         self.view = snapshotView
+    }
+    
+    // MARK: API
+    
+    func select(snapshot: Snapshot) {
+        snapshotView?.select(snapshot: snapshot)
+    }
+    
+    func deselect(snapshot: Snapshot) {
+        snapshotView?.deselect(snapshot: snapshot)
     }
     
     // MARK: SnapshotViewDelegate
