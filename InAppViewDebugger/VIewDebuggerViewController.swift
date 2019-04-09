@@ -89,7 +89,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     }
     
     func snapshotViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: SnapshotViewController) {
-        hierarchyNavigationController.popViewController(animated: false)
+        hierarchyNavigationController.popViewController(animated: true)
     }
     
     // MARK: HierarchyTableViewControllerDelegate
@@ -107,7 +107,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     }
     
     func hierarchyTableViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: HierarchyTableViewController) {
-        snapshotNavigationController.popViewController(animated: false)
+        snapshotNavigationController.popViewController(animated: true)
     }
     
     // MARK: Private
