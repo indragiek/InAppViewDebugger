@@ -88,7 +88,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         if topViewController == self {
             shouldIgnoreMaxDepth = true
             let indexPath = dataSource?.indexPath(forValue: snapshot)
-            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
         } else {
             topViewController.selectRow(forSnapshot: snapshot)
         }
