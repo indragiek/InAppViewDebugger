@@ -42,6 +42,7 @@ final class HierarchyTableViewCell: UITableViewCell {
     let subtreeButton: UIButton = {
         let button = UIButton(type: .custom)
         let color = UIColor(white: 0.0, alpha: 0.25)
+        button.setBackgroundImage(colorImage(color: UIColor(white: 0.0, alpha: 0.1)), for: .highlighted)
         button.setTitle(NSLocalizedString("Subtree", comment: "Show the subtree starting at this element"), for: .normal)
         button.setTitleColor(color, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
@@ -50,6 +51,7 @@ final class HierarchyTableViewCell: UITableViewCell {
         button.layer.cornerRadius = 4.0
         button.layer.borderWidth = 1.5
         button.layer.borderColor = color.cgColor
+        button.layer.masksToBounds = true
         
         let imageTextSpacing: CGFloat = 4.0
         let imageTextInset = imageTextSpacing / 2.0
@@ -91,4 +93,13 @@ final class HierarchyTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+private func colorImage(color: UIColor) -> UIImage? {
+    UIGraphicsBeginImageContext(CGSize(width: 1.0, height: 1.0))
+    color.setFill()
+    UIRectFill(CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0))
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return image
 }
