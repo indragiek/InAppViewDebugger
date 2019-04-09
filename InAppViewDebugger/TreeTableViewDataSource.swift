@@ -45,6 +45,22 @@ final class TreeTableViewDataSource<TreeType: Tree>: NSObject, UITableViewDataSo
     }
 }
 
+extension TreeTableViewDataSource where TreeType: AnyObject {
+    func indexPath(forValue value: TreeType) -> IndexPath? {
+        return flattenedTree
+            .firstIndex { $0.value === value }
+            .flatMap { IndexPath(row: $0, section: 0) }
+    }
+}
+
+extension TreeTableViewDataSource where TreeType: Equatable {
+    func indexPath(forValue value: TreeType) -> IndexPath? {
+        return flattenedTree
+            .firstIndex { $0.value == value }
+            .flatMap { IndexPath(row: $0, section: 0) }
+    }
+}
+
 private struct FlattenedTree<TreeType: Tree> {
     let value: TreeType
     let depth: Int

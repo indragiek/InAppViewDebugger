@@ -8,10 +8,17 @@
 
 import UIKit
 
+protocol SnapshotViewControllerDelegate: AnyObject {
+    func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot)
+    func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot)
+}
+
 /// View controller that renders a 3D snapshot view using SceneKit.
 final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     private let snapshot: Snapshot
     private let configuration: SnapshotViewConfiguration
+    
+    weak var delegate: SnapshotViewControllerDelegate?
     
     init(snapshot: Snapshot, configuration: SnapshotViewConfiguration = SnapshotViewConfiguration()) {
         self.snapshot = snapshot
@@ -34,12 +41,12 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     
     // MARK: SnapshotViewDelegate
     
-    func snapshotView(_ snapshotView: SnapshotView, didSelectElement element: Element) {
-        
+    func snapshotView(_ snapshotView: SnapshotView, didSelectSnapshot snapshot: Snapshot) {
+        delegate?.snapshotViewController(self, didSelectSnapshot: snapshot)
     }
     
-    func snapshotView(_ snapshotView: SnapshotView, didDeselectElement element: Element) {
-        
+    func snapshotView(_ snapshotView: SnapshotView, didDeselectSnapshot snapshot: Snapshot) {
+        delegate?.snapshotViewController(self, didDeselectSnapshot: snapshot)
     }
 
     func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot) {

@@ -9,7 +9,7 @@
 import Foundation
 
 /// A snapshot of the UI element tree in its current state.
-public struct Snapshot {
+public final class Snapshot {
     public let identifier = UUID().uuidString
     public let label: ElementLabel
     public let frame: CGRect

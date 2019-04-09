@@ -11,11 +11,11 @@ import SceneKit
 
 protocol SnapshotViewDelegate: AnyObject {
     /// Called when an element is select by tapping on it.
-    func snapshotView(_ snapshotView: SnapshotView, didSelectElement element: Element)
+    func snapshotView(_ snapshotView: SnapshotView, didSelectSnapshot snapshot: Snapshot)
     
     /// Called when an element is deselected by tapping on a different element or when
     /// tapping outside the interactive area.
-    func snapshotView(_ snapshotView: SnapshotView, didDeselectElement element: Element)
+    func snapshotView(_ snapshotView: SnapshotView, didDeselectSnapshot snapshot: Snapshot)
     
     /// Called when "Focus" is selected from the actions menu for an element, indicating
     /// that a new view should be presented that focuses only on the hierarchy from
@@ -298,7 +298,9 @@ class SnapshotView: UIView {
             previousNodes.highlightNode?.removeFromParentNode()
             previousNodes.highlightNode = nil
             
-            delegate?.snapshotView(self, didDeselectElement: previousNodes.snapshot.element)
+            if snapshotNode == nil {
+                delegate?.snapshotView(self, didDeselectSnapshot: previousNodes.snapshot)
+            }
             highlightedNodes = nil
             descriptionLabel.text = nil
             setNeedsLayout()
@@ -316,7 +318,7 @@ class SnapshotView: UIView {
         descriptionLabel.text = nodes.snapshot.element.shortDescription
         setNeedsLayout()
         
-        delegate?.snapshotView(self, didSelectElement: nodes.snapshot.element)
+        delegate?.snapshotView(self, didSelectSnapshot: nodes.snapshot)
     }
     
     private func showMenu(snapshotNode: SCNNode?, point: CGPoint) {

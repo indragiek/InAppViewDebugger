@@ -15,7 +15,26 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
     
     private let snapshot: Snapshot
     private let configuration: HierarchyViewConfiguration
-    private var dataSource: TreeTableViewDataSource<Snapshot>?
+    
+    private var dataSource: TreeTableViewDataSource<Snapshot>? {
+        didSet {
+            if isViewLoaded {
+                tableView?.dataSource = dataSource
+                tableView?.reloadData()
+            }
+        }
+    }
+    private var shouldIgnoreMaxDepth = false {
+        didSet {
+            if shouldIgnoreMaxDepth != oldValue {
+                dataSource = TreeTableViewDataSource(
+                    tree: snapshot,
+                    maxDepth: shouldIgnoreMaxDepth ? nil : configuration.maxDepth,
+                    cellFactory: cellFactory(shouldIgnoreMaxDepth: shouldIgnoreMaxDepth)
+                )
+            }
+        }
+    }
     
     init(snapshot: Snapshot, configuration: HierarchyViewConfiguration) {
         self.snapshot = snapshot
@@ -26,35 +45,11 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         navigationItem.title = snapshot.element.label.name
         clearsSelectionOnViewWillAppear = false
         
-        self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { [weak self] (tableView, value, depth, indexPath, isCollapsed) in
-            let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
-            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(style: .default, reuseIdentifier: reuseIdentifier)
-            
-            let baseFont = configuration.nameFont
-            switch value.label.classification {
-            case .normal:
-                cell.nameLabel.font = baseFont
-            case .important:
-                if let descriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitBold) {
-                    cell.nameLabel.font = UIFont(descriptor: descriptor, size: baseFont.pointSize)
-                } else {
-                    cell.nameLabel.font = baseFont
-                }
-            }
-            cell.nameLabel.text = value.label.name
-            
-            let frame = value.frame
-            cell.frameLabel.font = configuration.frameFont
-            cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-            cell.lineView.lineCount = depth
-            cell.lineView.lineColors = configuration.lineColors
-            cell.lineView.lineWidth = configuration.lineWidth
-            cell.lineView.lineSpacing = configuration.lineSpacing
-            cell.showSubtreeButton = !value.children.isEmpty && depth >= (configuration.maxDepth ?? Int.max)
-            cell.indexPath = indexPath
-            cell.delegate = self
-            return cell
-        }
+        self.dataSource = TreeTableViewDataSource(
+            tree: snapshot,
+            maxDepth: configuration.maxDepth,
+            cellFactory: cellFactory(shouldIgnoreMaxDepth: false)
+        )
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -68,6 +63,22 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         tableView.separatorStyle = .none
     }
     
+    // MARK: API
+    
+    func selectRow(forSnapshot snapshot: Snapshot) {
+        shouldIgnoreMaxDepth = true
+        let indexPath = dataSource?.indexPath(forValue: snapshot)
+        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+    }
+    
+    func deselectRow(forSnapshot snapshot: Snapshot) {
+        shouldIgnoreMaxDepth = false
+        guard let indexPath = dataSource?.indexPath(forValue: snapshot) else {
+            return
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     // MARK: HierarchyTableViewCellDelegate
     
     func hierarchyTableViewCellDidTapSubtree(cell: HierarchyTableViewCell) {
@@ -76,5 +87,39 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         }
         let subtreeViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration)
         navigationController?.pushViewController(subtreeViewController, animated: true)
+    }
+    
+    // MARK: Private
+    
+    private func cellFactory(shouldIgnoreMaxDepth: Bool) -> TreeTableViewDataSource<Snapshot>.CellFactory {
+        return { [unowned self] (tableView, value, depth, indexPath, isCollapsed) in
+            let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
+            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(style: .default, reuseIdentifier: reuseIdentifier)
+            
+            let baseFont = self.configuration.nameFont
+            switch value.label.classification {
+            case .normal:
+                cell.nameLabel.font = baseFont
+            case .important:
+                if let descriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitBold) {
+                    cell.nameLabel.font = UIFont(descriptor: descriptor, size: baseFont.pointSize)
+                } else {
+                    cell.nameLabel.font = baseFont
+                }
+            }
+            cell.nameLabel.text = value.label.name
+            
+            let frame = value.frame
+            cell.frameLabel.font = self.configuration.frameFont
+            cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
+            cell.lineView.lineCount = depth
+            cell.lineView.lineColors = self.configuration.lineColors
+            cell.lineView.lineWidth = self.configuration.lineWidth
+            cell.lineView.lineSpacing = self.configuration.lineSpacing
+            cell.showSubtreeButton = !shouldIgnoreMaxDepth && !value.children.isEmpty && depth >= (self.configuration.maxDepth ?? Int.max)
+            cell.indexPath = indexPath
+            cell.delegate = self
+            return cell
+        }
     }
 }

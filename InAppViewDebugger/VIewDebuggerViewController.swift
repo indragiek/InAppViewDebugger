@@ -9,13 +9,18 @@
 import UIKit
 
 /// Root view controller for the view debugger.
-final class ViewDebuggerViewController: UIViewController {
+final class ViewDebuggerViewController: UIViewController, SnapshotViewControllerDelegate {
     private let snapshot: Snapshot
     private let configuration: Configuration
     
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     
-    private lazy var snapshotViewController: SnapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+    private lazy var snapshotViewController: SnapshotViewController = { [unowned self] in
+        let viewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
+        viewController.delegate = self
+        return viewController
+    }()
+    
     private lazy var snapshotNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: snapshotViewController)
         navigationController.navigationBar.isHidden = true
@@ -23,6 +28,7 @@ final class ViewDebuggerViewController: UIViewController {
     }()
     
     private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration.hierarchyViewConfiguration)
+    
     private lazy var hierarchyNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: hierarchyViewController)
         navigationController.navigationBar.isHidden = true
@@ -63,11 +69,23 @@ final class ViewDebuggerViewController: UIViewController {
         pageViewController.didMove(toParent: self)
     }
     
+    // MARK: SnapshotViewControllerDelegate
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot) {
+        hierarchyViewController.selectRow(forSnapshot: snapshot)
+    }
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot) {
+        hierarchyViewController.deselectRow(forSnapshot: snapshot)
+    }
+    
+    // MARK: Private
+    
     private func configureSegmentedControl() {
         let segmentedControl = UISegmentedControl(items: [
             NSLocalizedString("Snapshot", comment: "The title for the Snapshot tab"),
             NSLocalizedString("Hierarchy", comment: "The title for the Hierarchy tab"),
-        ])
+            ])
         segmentedControl.sizeToFit()
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
@@ -77,18 +95,6 @@ final class ViewDebuggerViewController: UIViewController {
     private func configureBarButtonItems() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(sender:)))
     }
-    
-    // MARK: Actions
-    
-    @objc private func segmentChanged(sender: UISegmentedControl) {
-        selectViewController(index: sender.selectedSegmentIndex)
-    }
-    
-    @objc private func done(sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    // MARK: Private
     
     private func selectViewController(index: Int) {
         switch index {
@@ -100,5 +106,15 @@ final class ViewDebuggerViewController: UIViewController {
             fatalError("Invalid view controller index \(index)")
             break
         }
+    }
+    
+    // MARK: Actions
+    
+    @objc private func segmentChanged(sender: UISegmentedControl) {
+        selectViewController(index: sender.selectedSegmentIndex)
+    }
+    
+    @objc private func done(sender: UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
     }
 }
