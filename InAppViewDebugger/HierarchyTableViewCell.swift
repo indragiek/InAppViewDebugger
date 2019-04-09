@@ -70,6 +70,12 @@ final class HierarchyTableViewCell: UITableViewCell {
     init(reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         
+        selectedBackgroundView = {
+            let backgroundView = UIView()
+            backgroundView.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+            return backgroundView
+        }()
+        
         contentView.addSubview(lineView)
         contentView.addSubview(labelStackView)
         contentView.addSubview(subtreeButton)
