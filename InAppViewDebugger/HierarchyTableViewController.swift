@@ -24,6 +24,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         super.init(nibName: nil, bundle: nil)
         
         navigationItem.title = snapshot.element.label.name
+        clearsSelectionOnViewWillAppear = false
         
         self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { [weak self] (tableView, value, depth, indexPath, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
