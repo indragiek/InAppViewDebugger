@@ -187,6 +187,10 @@ class SnapshotView: UIView {
         }
     }
     
+    func deselectAll() {
+        highlight(snapshotNode: nil)
+    }
+    
     // MARK: UIResponder
     
     override var canBecomeFirstResponder: Bool {

@@ -13,7 +13,7 @@ protocol HierarchyTableViewControllerDelegate: AnyObject {
     func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didDeselectSnapshot snapshot: Snapshot)
 }
 
-class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate {
+class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate, HierarchyTableViewControllerDelegate {
     private static let ReuseIdentifier = "HierarchyTableViewCell"
     
     private let snapshot: Snapshot
@@ -27,14 +27,19 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             }
         }
     }
+    
+    var rootSnapshot: Snapshot {
+        didSet {
+            if rootSnapshot !== oldValue {
+                recreateDataSource()
+            }
+        }
+    }
+    
     private var shouldIgnoreMaxDepth = false {
         didSet {
             if shouldIgnoreMaxDepth != oldValue {
-                dataSource = TreeTableViewDataSource(
-                    tree: snapshot,
-                    maxDepth: shouldIgnoreMaxDepth ? nil : configuration.maxDepth,
-                    cellFactory: cellFactory(shouldIgnoreMaxDepth: shouldIgnoreMaxDepth)
-                )
+                recreateDataSource()
             }
         }
     }
@@ -43,6 +48,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
     
     init(snapshot: Snapshot, configuration: HierarchyViewConfiguration) {
         self.snapshot = snapshot
+        self.rootSnapshot = snapshot
         self.configuration = configuration
         
         super.init(nibName: nil, bundle: nil)
@@ -68,20 +74,37 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         tableView.separatorStyle = .none
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            deselectAll()
+        }
+    }
+    
     // MARK: API
     
     func selectRow(forSnapshot snapshot: Snapshot) {
-        shouldIgnoreMaxDepth = true
-        let indexPath = dataSource?.indexPath(forValue: snapshot)
-        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+        let topViewController = topHierarchyViewController()
+        if topViewController == self {
+            shouldIgnoreMaxDepth = true
+            let indexPath = dataSource?.indexPath(forValue: snapshot)
+            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+        } else {
+            topViewController.selectRow(forSnapshot: snapshot)
+        }
     }
     
     func deselectRow(forSnapshot snapshot: Snapshot) {
-        shouldIgnoreMaxDepth = false
-        guard let indexPath = dataSource?.indexPath(forValue: snapshot) else {
-            return
+        let topViewController = topHierarchyViewController()
+        if topViewController == self {
+            shouldIgnoreMaxDepth = false
+            guard let indexPath = dataSource?.indexPath(forValue: snapshot) else {
+                return
+            }
+            tableView.deselectRow(at: indexPath, animated: true)
+        } else {
+            topViewController.deselectRow(forSnapshot: snapshot)
         }
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     // MARK: UITableViewDelegate
@@ -106,11 +129,47 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         guard let indexPath = cell.indexPath, let snapshot = dataSource?.value(atIndexPath: indexPath) else {
             return
         }
+        deselectAll()
         let subtreeViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration)
+        subtreeViewController.delegate = self
         navigationController?.pushViewController(subtreeViewController, animated: true)
     }
     
+    // MARK: HierarchyTableViewControllerDelegate
+    
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didSelectSnapshot snapshot: Snapshot) {
+        delegate?.hierarchyTableViewController(self, didSelectSnapshot: snapshot)
+    }
+    
+    func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didDeselectSnapshot snapshot: Snapshot) {
+        delegate?.hierarchyTableViewController(self, didDeselectSnapshot: snapshot)
+    }
+    
     // MARK: Private
+    
+    private func recreateDataSource() {
+        dataSource = TreeTableViewDataSource(
+            tree: rootSnapshot,
+            maxDepth: shouldIgnoreMaxDepth ? nil : configuration.maxDepth,
+            cellFactory: cellFactory(shouldIgnoreMaxDepth: shouldIgnoreMaxDepth)
+        )
+    }
+    
+    private func deselectAll() {
+        guard let indexPaths = tableView?.indexPathsForSelectedRows else {
+            return
+        }
+        for indexPath in indexPaths {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    func topHierarchyViewController() -> HierarchyTableViewController {
+        if let hierarchyViewController = navigationController?.topViewController as? HierarchyTableViewController {
+            return hierarchyViewController
+        }
+        return self
+    }
     
     private func cellFactory(shouldIgnoreMaxDepth: Bool) -> TreeTableViewDataSource<Snapshot>.CellFactory {
         return { [unowned self] (tableView, value, depth, indexPath, isCollapsed) in

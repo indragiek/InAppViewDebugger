@@ -11,10 +11,11 @@ import UIKit
 protocol SnapshotViewControllerDelegate: AnyObject {
     func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot)
     func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot)
+    func snapshotViewController(_ viewController: SnapshotViewController, didFocusOnSnapshot snapshot: Snapshot)
 }
 
 /// View controller that renders a 3D snapshot view using SceneKit.
-final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
+final class SnapshotViewController: UIViewController, SnapshotViewDelegate, SnapshotViewControllerDelegate {
     private let snapshot: Snapshot
     private let configuration: SnapshotViewConfiguration
     
@@ -41,14 +42,36 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
         self.view = snapshotView
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            snapshotView?.deselectAll()
+        }
+    }
+    
     // MARK: API
     
     func select(snapshot: Snapshot) {
-        snapshotView?.select(snapshot: snapshot)
+        let topViewController = topSnapshotViewController()
+        if topViewController == self {
+            snapshotView?.select(snapshot: snapshot)
+        } else {
+            topViewController.select(snapshot: snapshot)
+        }
     }
     
     func deselect(snapshot: Snapshot) {
-        snapshotView?.deselect(snapshot: snapshot)
+        let topViewController = topSnapshotViewController()
+        if topViewController == self {
+            snapshotView?.deselect(snapshot: snapshot)
+        } else {
+            topViewController.deselect(snapshot: snapshot)
+        }
     }
     
     // MARK: SnapshotViewDelegate
@@ -62,13 +85,38 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate {
     }
 
     func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot) {
-        let childSnapshotVC = SnapshotViewController(snapshot: snapshot, configuration: configuration)
-        navigationController?.pushViewController(childSnapshotVC, animated: true)
+        snapshotView.deselectAll()
+        let subViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration)
+        subViewController.delegate = self
+        navigationController?.pushViewController(subViewController, animated: true)
     }
     
     func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element) {
         let alert = UIAlertController(title: nil, message: element.description, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default))
         present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: SnapshotViewControllerDelegate
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot) {
+        delegate?.snapshotViewController(self, didSelectSnapshot: snapshot)
+    }
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot) {
+        delegate?.snapshotViewController(self, didDeselectSnapshot: snapshot)
+    }
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didFocusOnSnapshot snapshot: Snapshot) {
+        delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+    }
+    
+    // MARK: Private
+    
+    func topSnapshotViewController() -> SnapshotViewController {
+        if let snapshotViewController = navigationController?.topViewController as? SnapshotViewController {
+            return snapshotViewController
+        }
+        return self
     }
 }

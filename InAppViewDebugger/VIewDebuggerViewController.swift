@@ -36,6 +36,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     private lazy var hierarchyNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: hierarchyViewController)
         navigationController.navigationBar.isHidden = true
+        navigationController.interactivePopGestureRecognizer?.delegate = nil
         return navigationController
     }()
     
@@ -81,6 +82,10 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     
     func snapshotViewController(_ viewController: SnapshotViewController, didDeselectSnapshot snapshot: Snapshot) {
         hierarchyViewController.deselectRow(forSnapshot: snapshot)
+    }
+    
+    func snapshotViewController(_ viewController: SnapshotViewController, didFocusOnSnapshot snapshot: Snapshot) {
+        hierarchyViewController.rootSnapshot = snapshot
     }
     
     // MARK: HierarchyTableViewControllerDelegate
