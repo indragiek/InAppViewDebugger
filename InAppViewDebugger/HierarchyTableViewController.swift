@@ -22,7 +22,7 @@ class HierarchyTableViewController: UITableViewController {
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
             let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
             
-            let baseFont = UIFont.preferredFont(forTextStyle: .body)
+            let baseFont = configuration.nameFont
             switch value.label.classification {
             case .normal:
                 cell.nameLabel.font = baseFont
@@ -36,6 +36,7 @@ class HierarchyTableViewController: UITableViewController {
             cell.nameLabel.text = value.label.name
             
             let frame = value.frame
+            cell.frameLabel.font = configuration.frameFont
             cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
             cell.lineView.lineCount = depth
             cell.lineView.lineColors = configuration.lineColors

@@ -18,6 +18,12 @@ public struct HierarchyViewConfiguration {
     /// Setting this to `nil` means there's no maximum.
     public var maxDepth: Int? = 5
     
+    /// The font used to render the names of the elements.
+    public var nameFont = UIFont.preferredFont(forTextStyle: .body)
+    
+    /// The font used to render the frames of the elements.
+    public var frameFont = UIFont.preferredFont(forTextStyle: .caption1)
+    
     /// The colors of the lines displayed to show the depth of the tree.
     ///
     /// If the depth of a node exceeds the number of colors in this array,
