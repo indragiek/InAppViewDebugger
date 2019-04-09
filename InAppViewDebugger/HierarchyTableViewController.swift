@@ -27,7 +27,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         
         self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { [weak self] (tableView, value, depth, indexPath, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
-            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
+            let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(style: .default, reuseIdentifier: reuseIdentifier)
             
             let baseFont = configuration.nameFont
             switch value.label.classification {
@@ -62,6 +62,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(HierarchyTableViewCell.self, forCellReuseIdentifier: HierarchyTableViewController.ReuseIdentifier)
         tableView.dataSource = dataSource
         tableView.separatorStyle = .none
     }

@@ -79,8 +79,8 @@ final class HierarchyTableViewCell: UITableViewCell {
     
     weak var delegate: HierarchyTableViewCellDelegate?
     
-    init(reuseIdentifier: String?) {
-        super.init(style: .default, reuseIdentifier: reuseIdentifier)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         selectedBackgroundView = {
             let backgroundView = UIView()
