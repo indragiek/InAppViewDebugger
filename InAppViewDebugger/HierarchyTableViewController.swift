@@ -38,6 +38,9 @@ class HierarchyTableViewController: UITableViewController {
             let frame = value.frame
             cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
             cell.lineView.lineCount = depth
+            cell.lineView.lineColors = configuration.lineColors
+            cell.lineView.lineWidth = configuration.lineWidth
+            cell.lineView.lineSpacing = configuration.lineSpacing
             cell.subtreeButton.isHidden = depth < (configuration.maxDepth ?? Int.max)
             return cell
         }
