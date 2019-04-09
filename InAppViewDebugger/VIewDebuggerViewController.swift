@@ -15,7 +15,7 @@ final class ViewDebuggerViewController: UIViewController {
     
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     private lazy var snapshotViewController: SnapshotViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
-    private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot)
+    private lazy var hierarchyViewController: HierarchyTableViewController = HierarchyTableViewController(snapshot: snapshot, configuration: configuration.hierarchyViewConfiguration)
     
     init(snapshot: Snapshot, configuration: Configuration = Configuration()) {
         self.snapshot = snapshot

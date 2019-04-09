@@ -19,10 +19,10 @@ final class TreeTableViewDataSource<TreeType: Tree>: NSObject, UITableViewDataSo
     private let cellFactory: CellFactory
     private let flattenedTree: [FlattenedTree<TreeType>]
     
-    init(tree: TreeType, cellFactory: @escaping CellFactory) {
+    init(tree: TreeType, maxDepth: Int?, cellFactory: @escaping CellFactory) {
         self.tree = tree
         self.cellFactory = cellFactory
-        self.flattenedTree = flatten(tree: tree, depth: 0)
+        self.flattenedTree = flatten(tree: tree, depth: 0, maxDepth: maxDepth)
     }
     
     // MARK: UITableViewDataSource
@@ -52,11 +52,16 @@ private struct FlattenedTree<TreeType: Tree> {
     }
 }
 
-private func flatten<TreeType: Tree>(tree: TreeType, depth: Int = 0) -> [FlattenedTree<TreeType>] {
+private func flatten<TreeType: Tree>(tree: TreeType, depth: Int = 0, maxDepth: Int?) -> [FlattenedTree<TreeType>] {
     let initial = [FlattenedTree<TreeType>(value: tree, depth: depth)]
-    return tree.children.reduce(initial) { (result, child) in
-        var newResult = result
-        newResult.append(contentsOf: flatten(tree: child, depth: depth + 1))
-        return newResult
+    let childDepth = depth + 1
+    if let maxDepth = maxDepth, childDepth > maxDepth {
+        return initial
+    } else {
+        return tree.children.reduce(initial) { (result, child) in
+            var newResult = result
+            newResult.append(contentsOf: flatten(tree: child, depth: childDepth, maxDepth: maxDepth))
+            return newResult
+        }
     }
 }

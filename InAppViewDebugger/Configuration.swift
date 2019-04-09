@@ -13,5 +13,8 @@ public struct Configuration {
     /// Configuration for the 3D snapshot view.
     public var snapshotViewConfiguration = SnapshotViewConfiguration()
     
+    /// Configuration for the hierarchy (tree) view.
+    public var hierarchyViewConfiguration = HierarchyViewConfiguration()
+    
     public init() {}
 }

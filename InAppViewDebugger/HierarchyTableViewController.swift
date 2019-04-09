@@ -16,9 +16,9 @@ class HierarchyTableViewController: UITableViewController {
     private let snapshot: Snapshot
     private let dataSource: TreeTableViewDataSource<Snapshot>
     
-    init(snapshot: Snapshot) {
+    init(snapshot: Snapshot, configuration: HierarchyViewConfiguration) {
         self.snapshot = snapshot
-        self.dataSource = TreeTableViewDataSource(tree: snapshot) { (tableView, value, depth, isCollapsed) in
+        self.dataSource = TreeTableViewDataSource(tree: snapshot, maxDepth: configuration.maxDepth) { (tableView, value, depth, isCollapsed) in
             let reuseIdentifier = HierarchyTableViewController.ReuseIdentifier
             let cell = (tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as? HierarchyTableViewCell) ?? HierarchyTableViewCell(reuseIdentifier: reuseIdentifier)
             
@@ -38,6 +38,7 @@ class HierarchyTableViewController: UITableViewController {
             let frame = value.frame
             cell.frameLabel.text = String(format: "(%.1f, %.1f, %.1f, %.1f)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
             cell.lineView.lineCount = depth
+            cell.subtreeButton.isHidden = depth < (configuration.maxDepth ?? Int.max)
             return cell
         }
         super.init(nibName: nil, bundle: nil)
