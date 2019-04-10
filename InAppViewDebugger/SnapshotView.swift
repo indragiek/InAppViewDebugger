@@ -17,10 +17,9 @@ protocol SnapshotViewDelegate: AnyObject {
     /// tapping outside the interactive area.
     func snapshotView(_ snapshotView: SnapshotView, didDeselectSnapshot snapshot: Snapshot)
     
-    /// Called when "Focus" is selected from the actions menu for an element, indicating
-    /// that a new view should be presented that focuses only on the hierarchy from
-    /// this element.
-    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot)
+    /// Called when the user long presses on a element. This is handled by presenting an
+    /// action sheet for the element.
+    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot)
     
     /// Called when the view wants to present an alert controller.
     func snapshotView(_ snapshotView: SnapshotView, showAlertController alertController: UIAlertController)
@@ -290,24 +289,17 @@ class SnapshotView: UIView {
     }
     
     private func showActionSheet(snapshotNode: SCNNode?, point: CGPoint) {
-        let actions: [UIAlertAction]
-        let message: String?
         if let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] {
             highlight(snapshotNode: snapshotNode)
-            actions = elementActions(snapshot: nodes.snapshot)
-            message = nodes.snapshot.element.description
+            delegate?.snapshotView(self, didLongPressSnapshot: nodes.snapshot)
         } else {
-            actions = globalActions()
-            message = nil
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            globalActions().forEach(alert.addAction)
+            let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel the action"), style: .cancel, handler: nil)
+            alert.addAction(cancel)
+            alert.preferredAction = cancel
+            delegate?.snapshotView(self, showAlertController: alert)
         }
-        
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
-        actions.forEach(alert.addAction)
-        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel the action"), style: .cancel, handler: nil)
-        alert.addAction(cancel)
-        alert.preferredAction = cancel
-        
-        delegate?.snapshotView(self, showAlertController: alert)
     }
     
     private func globalActions() -> [UIAlertAction] {
@@ -328,17 +320,6 @@ class SnapshotView: UIView {
         return [
             UIAlertAction(title: headerItemTitle, style: .default, handler: showHideHeaderNodes),
             UIAlertAction(title: borderItemTitle, style: .default, handler: showHideBorderNodes),
-        ]
-    }
-    
-    private func elementActions(snapshot: Snapshot) -> [UIAlertAction] {
-        return [
-            UIAlertAction(title: NSLocalizedString("Focus", comment: "Focus on the hierarchy associated with this element"), style: .default) { _ in
-                self.delegate?.snapshotView(self, didFocusOnElementWithSnapshot: snapshot)
-            },
-            UIAlertAction(title: NSLocalizedString("Log Description", comment: "Log the description of this element"), style: .default) { _ in
-                print(snapshot.element)
-            }
         ]
     }
 }

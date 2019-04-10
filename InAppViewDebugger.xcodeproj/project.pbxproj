@@ -26,6 +26,7 @@
 		034CC4BB2251EA0000953FC3 /* SnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BA2251EA0000953FC3 /* SnapshotView.swift */; };
 		034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */; };
 		03621DF8225C54F300C0073C /* HierarchyViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03621DF7225C54F300C0073C /* HierarchyViewConfiguration.swift */; };
+		03621DFA225DBDE400C0073C /* SnapshotActionSheetUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03621DF9225DBDE400C0073C /* SnapshotActionSheetUtils.swift */; };
 		03A4283D225481CD00A5242D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03A4283C225481CD00A5242D /* Assets.xcassets */; };
 		03A4283F2254829E00A5242D /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A4283E2254829E00A5242D /* RangeSlider.swift */; };
 		03A428412257036300A5242D /* VIewDebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A428402257036300A5242D /* VIewDebuggerViewController.swift */; };
@@ -80,6 +81,7 @@
 		034CC4BA2251EA0000953FC3 /* SnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotView.swift; sourceTree = "<group>"; };
 		034CC4BC2251EA5E00953FC3 /* SnapshotViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotViewConfiguration.swift; sourceTree = "<group>"; };
 		03621DF7225C54F300C0073C /* HierarchyViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyViewConfiguration.swift; sourceTree = "<group>"; };
+		03621DF9225DBDE400C0073C /* SnapshotActionSheetUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotActionSheetUtils.swift; sourceTree = "<group>"; };
 		03A4283C225481CD00A5242D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		03A4283E2254829E00A5242D /* RangeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
 		03A428402257036300A5242D /* VIewDebuggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIewDebuggerViewController.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				031202AE2259CF8600DCC941 /* HierarchyTableViewCell.swift */,
 				031202B02259DBF900DCC941 /* ParallelLineView.swift */,
 				03621DF7225C54F300C0073C /* HierarchyViewConfiguration.swift */,
+				03621DF9225DBDE400C0073C /* SnapshotActionSheetUtils.swift */,
 			);
 			path = InAppViewDebugger;
 			sourceTree = "<group>";
@@ -284,6 +287,7 @@
 				03A42847225710CF00A5242D /* ViewControllerUtils.swift in Sources */,
 				034CC4B92251E8D800953FC3 /* Snapshot.swift in Sources */,
 				03A42843225703C500A5242D /* Configuration.swift in Sources */,
+				03621DFA225DBDE400C0073C /* SnapshotActionSheetUtils.swift in Sources */,
 				034CC4BD2251EA5E00953FC3 /* SnapshotViewConfiguration.swift in Sources */,
 				031202AB2259C04100DCC941 /* HierarchyTableViewController.swift in Sources */,
 				03A428412257036300A5242D /* VIewDebuggerViewController.swift in Sources */,

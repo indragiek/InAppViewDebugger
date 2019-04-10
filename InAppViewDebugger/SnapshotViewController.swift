@@ -77,12 +77,7 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
     }
     
     func focus(snapshot: Snapshot) {
-        let topViewController = topSnapshotViewController()
-        if topViewController == self {
-            pushSubtreeViewController(snapshot: snapshot, callDelegate: false)
-        } else {
-            topViewController.focus(snapshot: snapshot)
-        }
+        focus(snapshot: snapshot, callDelegate: false)
     }
     
     // MARK: SnapshotViewDelegate
@@ -95,8 +90,11 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         delegate?.snapshotViewController(self, didDeselectSnapshot: snapshot)
     }
 
-    func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot) {
-        pushSubtreeViewController(snapshot: snapshot, callDelegate: true)
+    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot) {
+        let actionSheet = makeActionSheet(snapshot: snapshot) { snapshot in
+            self.focus(snapshot: snapshot, callDelegate: true)
+        }
+        present(actionSheet, animated: true, completion: nil)
     }
     
     func snapshotView(_ snapshotView: SnapshotView, showAlertController alertController: UIAlertController) {
@@ -123,13 +121,18 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
     
     // MARK: Private
     
-    private func pushSubtreeViewController(snapshot: Snapshot, callDelegate: Bool) {
-        snapshotView?.deselectAll()
-        let subtreeViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration)
-        subtreeViewController.delegate = self
-        navigationController?.pushViewController(subtreeViewController, animated: true)
-        if callDelegate {
-            delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+    private func focus(snapshot: Snapshot, callDelegate: Bool) {
+        let topViewController = topSnapshotViewController()
+        if topViewController == self {
+            snapshotView?.deselectAll()
+            let subtreeViewController = SnapshotViewController(snapshot: snapshot, configuration: configuration)
+            subtreeViewController.delegate = self
+            navigationController?.pushViewController(subtreeViewController, animated: true)
+            if callDelegate {
+                delegate?.snapshotViewController(self, didFocusOnSnapshot: snapshot)
+            }
+        } else {
+            topViewController.focus(snapshot: snapshot)
         }
     }
     
