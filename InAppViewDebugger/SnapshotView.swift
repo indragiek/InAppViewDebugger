@@ -22,10 +22,8 @@ protocol SnapshotViewDelegate: AnyObject {
     /// this element.
     func snapshotView(_ snapshotView: SnapshotView, didFocusOnElementWithSnapshot snapshot: Snapshot)
     
-    /// Called when "Show Description" is selected from the actions menu for an element,
-    /// indicating that the delegate should present the description associated with the
-    /// element.
-    func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element)
+    /// Called when the view wants to present an alert controller.
+    func snapshotView(_ snapshotView: SnapshotView, showAlertController alertController: UIAlertController)
 }
 
 /// A view that renders an interactive 3D representation of a UI element
@@ -52,8 +50,6 @@ class SnapshotView: UIView {
     private var highlightedNodes: SnapshotNodes?
     private var hideHeaderNodes: Bool
     private var hideBorderNodes: Bool = false
-    private var menuVisible: Bool = false
-    private var menuAssociatedSnapshot: Snapshot?
     private var suppressSelectionEvents = false
     
     // MARK: Initialization
@@ -71,7 +67,6 @@ class SnapshotView: UIView {
         configureDescriptionLabel()
         configureTapGestureRecognizer()
         configureLongPressGestureRecognizer()
-        configureNotificationObservers()
     }
     
     private func configureSceneView() {
@@ -158,12 +153,6 @@ class SnapshotView: UIView {
         addGestureRecognizer(longPressGestureRecognizer)
     }
     
-    private func configureNotificationObservers() {
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(didShowMenuItem(notification:)), name: UIMenuController.didShowMenuNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(didHideMenuItem(notification:)), name: UIMenuController.didHideMenuNotification, object: nil)
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -191,42 +180,27 @@ class SnapshotView: UIView {
         highlight(snapshotNode: nil)
     }
     
-    // MARK: UIResponder
-    
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-    
-    override var canResignFirstResponder: Bool {
-        return true
-    }
-    
     // MARK: Gesture Recognizer Actions
     
     @objc private func handleTap(sender: UITapGestureRecognizer) {
         guard sender.state == .ended else {
             return
         }
-        if menuVisible {
-            UIMenuController.shared.setMenuVisible(false, animated: true)
-        }
-        
         let point = sender.location(ofTouch: 0, in: sceneView)
         highlight(snapshotNode: snapshotNodeAtPoint(point))
     }
-    
     
     @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
         }
         let point = sender.location(ofTouch: 0, in: sceneView)
-        showMenu(snapshotNode: snapshotNodeAtPoint(point), point: point)
+        showActionSheet(snapshotNode: snapshotNodeAtPoint(point), point: point)
     }
     
     // MARK: Menu Item Actions
     
-    @objc private func showHideHeaderNodes(sender: UIMenuItem) {
+    private func showHideHeaderNodes(sender: UIAlertAction) {
         hideHeaderNodes = !hideHeaderNodes
         
         for (_, nodes) in snapshotIdentifierToNodesMap {
@@ -234,35 +208,14 @@ class SnapshotView: UIView {
         }
     }
     
-    @objc private func showHideBorderNodes(sender: UIMenuItem) {
+    private func showHideBorderNodes(sender: UIAlertAction) {
         hideBorderNodes = !hideBorderNodes
         
         for (_, nodes) in snapshotIdentifierToNodesMap {
             nodes.borderNode?.isHidden = hideBorderNodes
         }
     }
-    
-    @objc private func focus(sender: UIMenuItem) {
-        guard let snapshot = menuAssociatedSnapshot else {
-            return
-        }
-        delegate?.snapshotView(self, didFocusOnElementWithSnapshot: snapshot)
-    }
-    
-    @objc private func logDescription(sender: UIMenuItem) {
-        guard let element = menuAssociatedSnapshot?.element else {
-            return
-        }
-        print(element)
-    }
-    
-    @objc private func showDescription(sender: UIMenuItem) {
-        guard let element = menuAssociatedSnapshot?.element else {
-            return
-        }
-        delegate?.snapshotView(self, showDescriptionForElement: element)
-    }
-    
+
     // MARK: UIControl Actions
     
     @objc private func spacingSliderChanged(sender: UISlider) {
@@ -289,17 +242,6 @@ class SnapshotView: UIView {
         for (_, nodes) in snapshotIdentifierToNodesMap {
             nodes.snapshotNode?.isHidden = !range.contains(maximumDepth - nodes.depth)
         }
-    }
-    
-    // MARK: Notifications
-    
-    @objc private func didShowMenuItem(notification: Notification) {
-        menuVisible = true
-    }
-    
-    @objc private func didHideMenuItem(notification: Notification) {
-        menuVisible = false
-        menuAssociatedSnapshot = nil
     }
     
     // MARK: Helper
@@ -347,24 +289,28 @@ class SnapshotView: UIView {
         }
     }
     
-    private func showMenu(snapshotNode: SCNNode?, point: CGPoint) {
-        let menuItems: [UIMenuItem]
+    private func showActionSheet(snapshotNode: SCNNode?, point: CGPoint) {
+        let actions: [UIAlertAction]
+        let message: String?
         if let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] {
-            menuAssociatedSnapshot = nodes.snapshot
             highlight(snapshotNode: snapshotNode)
-            menuItems = elementMenuItems()
+            actions = elementActions(snapshot: nodes.snapshot)
+            message = nodes.snapshot.element.description
         } else {
-            menuItems = globalMenuItems()
+            actions = globalActions()
+            message = nil
         }
         
-        becomeFirstResponder()
-        let menuController = UIMenuController.shared
-        menuController.menuItems = menuItems
-        menuController.setTargetRect(CGRect(origin: point, size: .zero), in: self)
-        menuController.setMenuVisible(true, animated: true)
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+        actions.forEach(alert.addAction)
+        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel the action"), style: .cancel, handler: nil)
+        alert.addAction(cancel)
+        alert.preferredAction = cancel
+        
+        delegate?.snapshotView(self, showAlertController: alert)
     }
     
-    private func globalMenuItems() -> [UIMenuItem] {
+    private func globalActions() -> [UIAlertAction] {
         let headerItemTitle: String
         if hideHeaderNodes {
             headerItemTitle = NSLocalizedString("Show Headers", comment: "Show the headers above each UI element")
@@ -380,16 +326,19 @@ class SnapshotView: UIView {
         }
         
         return [
-            UIMenuItem(title: headerItemTitle, action: #selector(showHideHeaderNodes(sender:))),
-            UIMenuItem(title: borderItemTitle, action: #selector(showHideBorderNodes(sender:)))
+            UIAlertAction(title: headerItemTitle, style: .default, handler: showHideHeaderNodes),
+            UIAlertAction(title: borderItemTitle, style: .default, handler: showHideBorderNodes),
         ]
     }
     
-    private func elementMenuItems() -> [UIMenuItem] {
+    private func elementActions(snapshot: Snapshot) -> [UIAlertAction] {
         return [
-            UIMenuItem(title: NSLocalizedString("Focus", comment: "Focus on the hierarchy associated with this element"), action: #selector(focus(sender:))),
-            UIMenuItem(title: NSLocalizedString("Log Description", comment: "Log the description of this element"), action: #selector(logDescription(sender:))),
-            UIMenuItem(title: NSLocalizedString("Show Description", comment: "Show the description of this element"), action: #selector(showDescription(sender:))),
+            UIAlertAction(title: NSLocalizedString("Focus", comment: "Focus on the hierarchy associated with this element"), style: .default) { _ in
+                self.delegate?.snapshotView(self, didFocusOnElementWithSnapshot: snapshot)
+            },
+            UIAlertAction(title: NSLocalizedString("Log Description", comment: "Log the description of this element"), style: .default) { _ in
+                print(snapshot.element)
+            }
         ]
     }
 }

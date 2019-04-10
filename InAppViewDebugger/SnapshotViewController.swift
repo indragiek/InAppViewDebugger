@@ -99,12 +99,10 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         pushSubtreeViewController(snapshot: snapshot, callDelegate: true)
     }
     
-    func snapshotView(_ snapshotView: SnapshotView, showDescriptionForElement element: Element) {
-        let alert = UIAlertController(title: nil, message: element.description, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default))
-        present(alert, animated: true, completion: nil)
+    func snapshotView(_ snapshotView: SnapshotView, showAlertController alertController: UIAlertController) {
+        present(alertController, animated: true, completion: nil)
     }
-    
+
     // MARK: SnapshotViewControllerDelegate
     
     func snapshotViewController(_ viewController: SnapshotViewController, didSelectSnapshot snapshot: Snapshot) {
