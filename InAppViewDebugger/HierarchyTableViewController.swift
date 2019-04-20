@@ -139,6 +139,16 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         pushSubtreeViewController(snapshot: snapshot, callDelegate: true)
     }
     
+    func hierarchyTableViewCellDidLongPress(cell: HierarchyTableViewCell) {
+        guard let indexPath = cell.indexPath, let snapshot = dataSource?.value(atIndexPath: indexPath) else {
+            return
+        }
+        let actionSheet = makeActionSheet(snapshot: snapshot) { snapshot in
+            self.focus(snapshot: snapshot)
+        }
+        present(actionSheet, animated: true, completion: nil)
+    }
+    
     // MARK: HierarchyTableViewControllerDelegate
     
     func hierarchyTableViewController(_ viewController: HierarchyTableViewController, didSelectSnapshot snapshot: Snapshot) {

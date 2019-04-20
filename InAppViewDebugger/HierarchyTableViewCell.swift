@@ -10,6 +10,7 @@ import UIKit
 
 protocol HierarchyTableViewCellDelegate: AnyObject {
     func hierarchyTableViewCellDidTapSubtree(cell: HierarchyTableViewCell)
+    func hierarchyTableViewCellDidLongPress(cell: HierarchyTableViewCell)
 }
 
 final class HierarchyTableViewCell: UITableViewCell {
@@ -113,6 +114,9 @@ final class HierarchyTableViewCell: UITableViewCell {
             subtreeButton.trailingAnchor.constraint(equalTo: marginsGuide.trailingAnchor),
         ])
         subtreeLabelWidthConstraint = subtreeButton.widthAnchor.constraint(equalToConstant: 0.0)
+        
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress(sender:)))
+        contentView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -123,6 +127,10 @@ final class HierarchyTableViewCell: UITableViewCell {
     
     @objc private func didTapSubtree(sender: UIButton) {
         delegate?.hierarchyTableViewCellDidTapSubtree(cell: self)
+    }
+    
+    @objc private func longPress(sender: UILongPressGestureRecognizer) {
+        delegate?.hierarchyTableViewCellDidLongPress(cell: self)
     }
 }
 
