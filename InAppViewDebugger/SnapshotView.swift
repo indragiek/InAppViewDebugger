@@ -106,7 +106,7 @@ class SnapshotView: UIView {
         
         NSLayoutConstraint.activate([
             spacingSlider.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
-            spacingSlider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
+            spacingSlider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -8.0),
         ])
     }
     
