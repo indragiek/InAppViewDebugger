@@ -9,7 +9,7 @@
 import UIKit
 
 /// Configuration options for the hierarchy (tree) view.
-public struct HierarchyViewConfiguration {
+@objc public final class HierarchyViewConfiguration: NSObject {
     /// The maximum depth that is rendered in the tree view. If the
     /// depth of the item exceeds this value, it will be hidden from
     /// view and can only be accessed by tapping the "Subtree" button
@@ -43,5 +43,5 @@ public struct HierarchyViewConfiguration {
     /// The spacing between the lines drawn to show the depth of the three.
     public var lineSpacing: CGFloat = 12.0
     
-    public init() {}
+    public override init() {}
 }

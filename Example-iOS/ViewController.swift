@@ -69,7 +69,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func snapshot(sender: UIBarButtonItem) {
-        presentViewDebugger()
+        InAppViewDebugger.presentViewDebugger()
     }
 }
 

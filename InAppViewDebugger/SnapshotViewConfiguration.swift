@@ -9,7 +9,7 @@
 import UIKit
 
 /// Configuration options for the 3D snapshot view.
-public struct SnapshotViewConfiguration {
+@objc public final class SnapshotViewConfiguration: NSObject {
     /// Attributes used to customize the header rendered above the UI element.
     public struct HeaderAttributes {
         /// The background color of the header rendered above each view
@@ -62,5 +62,5 @@ public struct SnapshotViewConfiguration {
     /// The font used to render the description for a selected element.
     public var descriptionFont = UIFont.systemFont(ofSize: 14)
     
-    public init() {}
+    public override init() {}
 }

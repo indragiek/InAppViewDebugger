@@ -53,14 +53,6 @@ extension TreeTableViewDataSource where TreeType: AnyObject {
     }
 }
 
-extension TreeTableViewDataSource where TreeType: Equatable {
-    func indexPath(forValue value: TreeType) -> IndexPath? {
-        return flattenedTree
-            .firstIndex { $0.value == value }
-            .flatMap { IndexPath(row: $0, section: 0) }
-    }
-}
-
 private struct FlattenedTree<TreeType: Tree> {
     let value: TreeType
     let depth: Int
