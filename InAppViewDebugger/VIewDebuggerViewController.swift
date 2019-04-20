@@ -46,9 +46,10 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         super.init(nibName: nil, bundle: nil)
         
         navigationItem.title = snapshot.label.name
+        configureBarButtonItems()
+        
         if traitCollection.userInterfaceIdiom == .phone {
             configureSegmentedControl()
-            configureBarButtonItems()
         }
     }
     
