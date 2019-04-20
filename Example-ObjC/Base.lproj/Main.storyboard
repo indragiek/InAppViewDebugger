@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.59" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="cf1-Vl-xqA">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.45"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="iX0-24-YkB">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="O62-lq-9AS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController id="cf1-Vl-xqA" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="smr-v9-5kY">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="qyP-iz-7eC" kind="relationship" relationship="rootViewController" id="xCC-3v-j1h"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="-994" y="-94"/>
+        </scene>
+        <!--View-->
+        <scene sceneID="0l4-A4-mQh">
+            <objects>
+                <viewController id="qyP-iz-7eC" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="sMg-lP-dSb">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="wiT-Zo-fIA"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="View" id="DqV-Mu-aIN">
+                        <barButtonItem key="rightBarButtonItem" title="Snapshot" id="Dka-Gu-0sR">
+                            <connections>
+                                <action selector="snapshot:" destination="qyP-iz-7eC" id="rIf-1n-apc"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lyw-La-yGW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-155" y="-94"/>
+        </scene>
+    </scenes>
+</document>

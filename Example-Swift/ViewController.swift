@@ -32,12 +32,12 @@ class ViewController: UIViewController {
         let frames1 = view1.bounds.divided(atDistance: view1.bounds.height / 2, from: .minYEdge)
         let view3 = UIView()
         view3.backgroundColor = .blue
-        view3.frame = frames1.slice.insetBy(dx: 0, dy: -10)
+        view3.frame = frames1.slice
         
-        let v = UIView()
-        v.backgroundColor = .brown
-        v.frame = view3.bounds.insetBy(dx: 20, dy: 20)
-        view3.addSubview(v)
+        let overlay = UIView()
+        overlay.backgroundColor = .brown
+        overlay.frame = view3.bounds.insetBy(dx: 20, dy: 20)
+        view3.addSubview(overlay)
         
         let view4 = UIView()
         view4.backgroundColor = .orange

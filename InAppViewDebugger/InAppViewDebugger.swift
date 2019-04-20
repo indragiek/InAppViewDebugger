@@ -13,7 +13,7 @@ import UIKit
     /// from the root view controller.
     ///
     /// - Parameters:
-    ///   - view: The view controller whose view should be snapshotted.
+    ///   - window: The view controller whose view should be snapshotted.
     ///   - configuration: Optional configuration for the view debugger.
     ///   - completion: Completion block to be called once the view debugger has
     ///   been presented.
