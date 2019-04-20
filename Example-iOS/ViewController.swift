@@ -16,18 +16,15 @@ class ViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = UIColor.cyan
         view.frame = UIScreen.main.bounds
-        view.restorationIdentifier = "root"
         
         let frames = view.bounds.divided(atDistance: view.bounds.width / 2, from: .minXEdge)
         let view1 = UIView()
         view1.backgroundColor = .yellow
         view1.frame = frames.slice
-        view1.restorationIdentifier = "left half"
         
         let view2 = UIView()
         view2.backgroundColor = .purple
         view2.frame = frames.remainder
-        view2.restorationIdentifier = "right half"
         
         view.addSubview(view1)
         view.addSubview(view2)
@@ -36,7 +33,6 @@ class ViewController: UIViewController {
         let view3 = UIView()
         view3.backgroundColor = .blue
         view3.frame = frames1.slice.insetBy(dx: 0, dy: -10)
-        view3.restorationIdentifier = "3"
         
         let v = UIView()
         v.backgroundColor = .brown
@@ -46,7 +42,6 @@ class ViewController: UIViewController {
         let view4 = UIView()
         view4.backgroundColor = .orange
         view4.frame = frames1.remainder
-        view4.restorationIdentifier = "4"
         
         view1.addSubview(view3)
         view1.addSubview(view4)
@@ -55,12 +50,10 @@ class ViewController: UIViewController {
         let view5 = UIView()
         view5.backgroundColor = .red
         view5.frame = frames2.slice
-        view5.restorationIdentifier = "5"
         
         let view6 = UIView()
         view6.backgroundColor = .green
         view6.frame = frames2.remainder
-        view6.restorationIdentifier = "6"
         
         view2.addSubview(view5)
         view2.addSubview(view6)
