@@ -8,7 +8,7 @@
 
 import UIKit
 
-func makeActionSheet(snapshot: Snapshot, focusAction: @escaping (Snapshot) -> Void) -> UIAlertController {
+func makeActionSheet(snapshot: Snapshot, sourceView: UIView, sourcePoint: CGPoint, focusAction: @escaping (Snapshot) -> Void) -> UIAlertController {
     let actionSheet = UIAlertController(title: nil, message: snapshot.element.description, preferredStyle: .actionSheet)
     actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Focus", comment: "Focus on the hierarchy associated with this element"), style: .default) { _ in
         focusAction(snapshot)
@@ -19,5 +19,7 @@ func makeActionSheet(snapshot: Snapshot, focusAction: @escaping (Snapshot) -> Vo
     let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel the action"), style: .cancel, handler: nil)
     actionSheet.addAction(cancel)
     actionSheet.preferredAction = cancel
+    actionSheet.popoverPresentationController?.sourceView = sourceView
+    actionSheet.popoverPresentationController?.sourceRect = CGRect(origin: sourcePoint, size: .zero)
     return actionSheet
 }

@@ -19,7 +19,7 @@ protocol SnapshotViewDelegate: AnyObject {
     
     /// Called when the user long presses on a element. This is handled by presenting an
     /// action sheet for the element.
-    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot)
+    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot, point: CGPoint)
     
     /// Called when the view wants to present an alert controller.
     func snapshotView(_ snapshotView: SnapshotView, showAlertController alertController: UIAlertController)
@@ -291,13 +291,15 @@ class SnapshotView: UIView {
     private func showActionSheet(snapshotNode: SCNNode?, point: CGPoint) {
         if let identifier = snapshotNode?.name, let nodes = snapshotIdentifierToNodesMap[identifier] {
             highlight(snapshotNode: snapshotNode)
-            delegate?.snapshotView(self, didLongPressSnapshot: nodes.snapshot)
+            delegate?.snapshotView(self, didLongPressSnapshot: nodes.snapshot, point: point)
         } else {
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             globalActions().forEach(alert.addAction)
             let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel the action"), style: .cancel, handler: nil)
             alert.addAction(cancel)
             alert.preferredAction = cancel
+            alert.popoverPresentationController?.sourceView = self
+            alert.popoverPresentationController?.sourceRect = CGRect(origin: point, size: .zero)
             delegate?.snapshotView(self, showAlertController: alert)
         }
     }

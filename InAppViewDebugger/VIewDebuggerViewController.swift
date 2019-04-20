@@ -13,7 +13,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     private let snapshot: Snapshot
     private let configuration: Configuration
     
-    private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    private var pageViewController: UIPageViewController?
     
     private lazy var snapshotViewController: SnapshotViewController = { [unowned self] in
         let viewController = SnapshotViewController(snapshot: snapshot, configuration: configuration.snapshotViewConfiguration)
@@ -45,8 +45,10 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         
         super.init(nibName: nil, bundle: nil)
         
-        configureSegmentedControl()
-        configureBarButtonItems()
+        if traitCollection.userInterfaceIdiom == .phone {
+            configureSegmentedControl()
+            configureBarButtonItems()
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,21 +58,11 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        selectViewController(index: 0)
-        addChild(pageViewController)
-        
-        if let pageView = pageViewController.view {
-            pageView.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(pageView)
-            NSLayoutConstraint.activate([
-                pageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                pageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                pageView.topAnchor.constraint(equalTo: view.topAnchor),
-                pageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            ])
+        if traitCollection.userInterfaceIdiom == .phone {
+            configurePageViewController()
+        } else {
+            configureSplitViewController()
         }
-        
-        pageViewController.didMove(toParent: self)
     }
     
     // MARK: SnapshotViewControllerDelegate
@@ -112,11 +104,41 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     
     // MARK: Private
     
+    private func configurePageViewController() {
+        let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        showChildViewController(pageViewController)
+        self.pageViewController = pageViewController
+        selectViewController(index: 0)
+    }
+    
+    private func configureSplitViewController() {
+        let splitViewController = UISplitViewController(nibName: nil, bundle: nil)
+        splitViewController.viewControllers = [hierarchyNavigationController, snapshotNavigationController]
+        showChildViewController(splitViewController)
+    }
+    
+    private func showChildViewController(_ childViewController: UIViewController) {
+        addChild(childViewController)
+        
+        if let childView = childViewController.view {
+            childView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(childView)
+            NSLayoutConstraint.activate([
+                childView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                childView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                childView.topAnchor.constraint(equalTo: view.topAnchor),
+                childView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            ])
+        }
+        
+        childViewController.didMove(toParent: self)
+    }
+    
     private func configureSegmentedControl() {
         let segmentedControl = UISegmentedControl(items: [
             NSLocalizedString("Snapshot", comment: "The title for the Snapshot tab"),
             NSLocalizedString("Hierarchy", comment: "The title for the Hierarchy tab"),
-            ])
+        ])
         segmentedControl.sizeToFit()
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
@@ -128,6 +150,9 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     }
     
     private func selectViewController(index: Int) {
+        guard let pageViewController = pageViewController else {
+            return
+        }
         switch index {
         case 0:
             pageViewController.setViewControllers([snapshotNavigationController], direction: .reverse, animated: false, completion: nil)

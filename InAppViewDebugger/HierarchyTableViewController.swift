@@ -106,12 +106,17 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
     }
     
     func focus(snapshot: Snapshot) {
+        focus(snapshot: snapshot, callDelegate: false)
+    }
+    
+    private func focus(snapshot: Snapshot, callDelegate: Bool) {
         let topViewController = topHierarchyViewController()
         if topViewController == self {
-            pushSubtreeViewController(snapshot: snapshot, callDelegate: false)
+            pushSubtreeViewController(snapshot: snapshot, callDelegate: callDelegate)
         } else {
             topViewController.focus(snapshot: snapshot)
         }
+
     }
     
     // MARK: UITableViewDelegate
@@ -139,12 +144,12 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         pushSubtreeViewController(snapshot: snapshot, callDelegate: true)
     }
     
-    func hierarchyTableViewCellDidLongPress(cell: HierarchyTableViewCell) {
+    func hierarchyTableViewCellDidLongPress(cell: HierarchyTableViewCell, point: CGPoint) {
         guard let indexPath = cell.indexPath, let snapshot = dataSource?.value(atIndexPath: indexPath) else {
             return
         }
-        let actionSheet = makeActionSheet(snapshot: snapshot) { snapshot in
-            self.focus(snapshot: snapshot)
+        let actionSheet = makeActionSheet(snapshot: snapshot, sourceView: cell, sourcePoint: point) { snapshot in
+            self.focus(snapshot: snapshot, callDelegate: true)
         }
         present(actionSheet, animated: true, completion: nil)
     }

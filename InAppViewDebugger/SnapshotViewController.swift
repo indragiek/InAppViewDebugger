@@ -90,8 +90,8 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         delegate?.snapshotViewController(self, didDeselectSnapshot: snapshot)
     }
 
-    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot) {
-        let actionSheet = makeActionSheet(snapshot: snapshot) { snapshot in
+    func snapshotView(_ snapshotView: SnapshotView, didLongPressSnapshot snapshot: Snapshot, point: CGPoint) {
+        let actionSheet = makeActionSheet(snapshot: snapshot, sourceView: snapshotView, sourcePoint: point) { snapshot in
             self.focus(snapshot: snapshot, callDelegate: true)
         }
         present(actionSheet, animated: true, completion: nil)
