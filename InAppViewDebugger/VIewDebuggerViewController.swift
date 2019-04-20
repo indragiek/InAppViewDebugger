@@ -24,6 +24,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     private lazy var snapshotNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: snapshotViewController)
         navigationController.navigationBar.isHidden = true
+        navigationController.title = NSLocalizedString("Snapshot", comment: "The title for the Snapshot tab")
         return navigationController
     }()
     
@@ -36,6 +37,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
     private lazy var hierarchyNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: hierarchyViewController)
         navigationController.navigationBar.isHidden = true
+        navigationController.title = NSLocalizedString("Hierarchy", comment: "The title for the Hierarchy tab")
         return navigationController
     }()
     
@@ -46,8 +48,6 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         super.init(nibName: nil, bundle: nil)
         
         navigationItem.title = snapshot.label.name
-        configureBarButtonItems()
-        
         if traitCollection.userInterfaceIdiom == .phone {
             configureSegmentedControl()
         }
@@ -65,6 +65,8 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         } else {
             configureSplitViewController()
         }
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(sender:)))
     }
     
     // MARK: SnapshotViewControllerDelegate
@@ -117,6 +119,8 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         let splitViewController = UISplitViewController(nibName: nil, bundle: nil)
         splitViewController.viewControllers = [hierarchyNavigationController, snapshotNavigationController]
         showChildViewController(splitViewController)
+        navigationItem.leftItemsSupplementBackButton = true
+        navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
     }
     
     private func showChildViewController(_ childViewController: UIViewController) {
@@ -145,10 +149,6 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
         navigationItem.titleView = segmentedControl
-    }
-    
-    private func configureBarButtonItems() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(sender:)))
     }
     
     private func selectViewController(index: Int) {
