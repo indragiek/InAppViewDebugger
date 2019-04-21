@@ -15,7 +15,7 @@ protocol HierarchyTableViewControllerDelegate: AnyObject {
     func hierarchyTableViewControllerWillNavigateBackToPreviousSnapshot(_ viewController: HierarchyTableViewController)
 }
 
-class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate, HierarchyTableViewControllerDelegate {
+final class HierarchyTableViewController: UITableViewController, HierarchyTableViewCellDelegate, HierarchyTableViewControllerDelegate {
     private static let ReuseIdentifier = "HierarchyTableViewCell"
     
     private let snapshot: Snapshot
