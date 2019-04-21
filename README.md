@@ -1,6 +1,7 @@
 # InAppViewDebugger
 
 [![License](https://img.shields.io/github/license/indragiek/InAppViewDebugger.svg)](LICENSE)
+[![CocoaPods](https://img.shields.io/cocoapods/v/InAppViewDebugger.svg)](https://cocoapods.org/?q=InAppViewDebugger)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 <p align="center">
