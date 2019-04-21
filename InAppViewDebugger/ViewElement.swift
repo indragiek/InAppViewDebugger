@@ -61,7 +61,7 @@ import UIKit
     
     private weak var view: UIView?
     
-    public init(view: UIView) {
+    @objc public init(view: UIView) {
         self.view = view
     }
 }
