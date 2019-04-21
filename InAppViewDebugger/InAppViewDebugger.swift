@@ -81,4 +81,9 @@ import UIKit
         let navigationController = UINavigationController(rootViewController: debuggerViewController)
         topViewController(rootViewController: rootViewController)?.present(navigationController, animated: true, completion: nil)
     }
+    
+    @available(*, unavailable)
+    override init() {
+        fatalError()
+    }
 }
