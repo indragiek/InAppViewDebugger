@@ -9,6 +9,23 @@
 import UIKit
 
 @objc public final class InAppViewDebugger: NSObject {
+    /// Takes a snapshot of the application's key window and presents the debugger
+    /// view controller from the root view controller.
+    @objc public class func present() {
+        presentForKeyWindow()
+    }
+    
+    /// Takes a snapshot of the application's key window and presents the debugger
+    /// view controller from the root view controller.
+    ///
+    /// - Parameters:
+    ///   - configuration: Optional configuration for the view debugger.
+    ///   - completion: Completion block to be called once the view debugger has
+    ///   been presented.
+    @objc public class func presentForKeyWindow(configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
+        presentForWindow(UIApplication.shared.keyWindow, configuration: configuration, completion: nil)
+    }
+    
     /// Takes a snapshot of the specified window and presents the debugger view controller
     /// from the root view controller.
     ///
@@ -17,12 +34,12 @@ import UIKit
     ///   - configuration: Optional configuration for the view debugger.
     ///   - completion: Completion block to be called once the view debugger has
     ///   been presented.
-    @objc public class func presentViewDebugger(window: UIWindow? = UIApplication.shared.keyWindow, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
+    @objc public class func presentForWindow(_ window: UIWindow?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
         guard let window = window else {
             return
         }
         let snapshot = Snapshot(element: ViewElement(view: window))
-        presentViewDebugger(snapshot: snapshot, rootViewController: window.rootViewController, configuration: configuration, completion: completion)
+        presentWithSnapshot(snapshot, rootViewController: window.rootViewController, configuration: configuration, completion: completion)
     }
     
     /// Takes a snapshot of the specified view and presents the debugger view controller
@@ -33,12 +50,12 @@ import UIKit
     ///   - configuration: Optional configuration for the view debugger.
     ///   - completion: Completion block to be called once the view debugger has
     ///   been presented.
-    @objc public class func presentViewDebugger(view: UIView?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
+    @objc public class func presentForView(_ view: UIView?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
         guard let view = view else {
             return
         }
         let snapshot = Snapshot(element: ViewElement(view: view))
-        presentViewDebugger(snapshot: snapshot, rootViewController: getNearestAncestorViewController(responder: view), configuration: configuration, completion: completion)
+        presentWithSnapshot(snapshot, rootViewController: getNearestAncestorViewController(responder: view), configuration: configuration, completion: completion)
     }
     
     /// Takes a snapshot of the view of the specified view controller and presents
@@ -49,12 +66,12 @@ import UIKit
     ///   - configuration: Optional configuration for the view debugger.
     ///   - completion: Completion block to be called once the view debugger has
     ///   been presented.
-    @objc public class func presentViewDebugger(viewController: UIViewController?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
+    @objc public class func presentForViewController(_ viewController: UIViewController?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
         guard let view = viewController?.view else {
             return
         }
         let snapshot = Snapshot(element: ViewElement(view: view))
-        presentViewDebugger(snapshot: snapshot, rootViewController: viewController, configuration: configuration, completion: completion)
+        presentWithSnapshot(snapshot, rootViewController: viewController, configuration: configuration, completion: completion)
     }
     
     /// Presents a view debugger for the a snapshot as a modal view controller on
@@ -67,7 +84,7 @@ import UIKit
     ///   - configuration: Optional configuration for the view debugger.
     ///   - completion: Completion block to be called once the view debugger has
     ///   been presented.
-    @objc public class func presentViewDebugger(snapshot: Snapshot, rootViewController: UIViewController?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
+    @objc public class func presentWithSnapshot(_ snapshot: Snapshot, rootViewController: UIViewController?, configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
         guard let rootViewController = rootViewController else {
             return
         }

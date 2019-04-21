@@ -66,7 +66,7 @@
 
 - (IBAction)snapshot:(UIBarButtonItem *)sender
 {
-    [InAppViewDebugger presentViewDebuggerWithWindow:UIApplication.sharedApplication.keyWindow configuration:nil completion:nil];
+    [InAppViewDebugger present];
 }
 
 @end
