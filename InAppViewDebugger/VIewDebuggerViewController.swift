@@ -46,13 +46,8 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         self.configuration = configuration
         
         super.init(nibName: nil, bundle: nil)
-        
-        navigationItem.title = snapshot.label.name
-        if traitCollection.userInterfaceIdiom == .phone {
-            configureSegmentedControl()
-        }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -61,8 +56,10 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         super.viewDidLoad()
         
         if traitCollection.userInterfaceIdiom == .phone {
+            configureSegmentedControl()
             configurePageViewController()
         } else {
+            navigationItem.title = snapshot.element.shortDescription
             configureSplitViewController()
         }
         
@@ -148,6 +145,7 @@ final class ViewDebuggerViewController: UIViewController, SnapshotViewController
         segmentedControl.sizeToFit()
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
+        navigationItem.title = nil
         navigationItem.titleView = segmentedControl
     }
     
