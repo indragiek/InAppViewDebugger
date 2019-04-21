@@ -9,7 +9,7 @@
 import UIKit
 
 /// An element that represents a UIView.
-@objc public final class ViewElement: NSObject, Element {
+@objc(IAVDViewElement) public final class ViewElement: NSObject, Element {
     public var label: ElementLabel {
         guard let view = view else {
             return ElementLabel(name: nil)
