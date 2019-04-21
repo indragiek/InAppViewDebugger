@@ -13,7 +13,3 @@ FOUNDATION_EXPORT double InAppViewDebuggerVersionNumber;
 
 //! Project version string for InAppViewDebugger.
 FOUNDATION_EXPORT const unsigned char InAppViewDebuggerVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <InAppViewDebugger/PublicHeader.h>
-
-
