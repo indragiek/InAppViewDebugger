@@ -12,18 +12,7 @@ import UIKit
     /// Takes a snapshot of the application's key window and presents the debugger
     /// view controller from the root view controller.
     @objc public class func present() {
-        presentForKeyWindow()
-    }
-    
-    /// Takes a snapshot of the application's key window and presents the debugger
-    /// view controller from the root view controller.
-    ///
-    /// - Parameters:
-    ///   - configuration: Optional configuration for the view debugger.
-    ///   - completion: Completion block to be called once the view debugger has
-    ///   been presented.
-    @objc public class func presentForKeyWindow(configuration: Configuration? = nil, completion: (() -> Void)? = nil) {
-        presentForWindow(UIApplication.shared.keyWindow, configuration: configuration, completion: nil)
+        presentForWindow(UIApplication.shared.keyWindow)
     }
     
     /// Takes a snapshot of the specified window and presents the debugger view controller
