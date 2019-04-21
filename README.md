@@ -11,9 +11,9 @@
 
 ### Features
 
-* **3D snapshot view implemented in SceneKit**: Gesture controls zooming, panning, and rotating
+* **3D snapshot view implemented in SceneKit**: Gesture controls for zooming, panning, and rotating.
 * **Hierarchy (tree) view that synchronizes its selection with the 3D view**: This is a feature I really wanted in Xcode, to be able to visually find a view and see where it is in the hierarchy view
-* **Support for iPad and iPhone**: Layouts are designed specifically for each form factor.
+* **Support for [iPad](images/main.png) and [iPhone](images/iphone1.png)**: Layouts are designed specifically for each form factor.
 * **Extensible:** The base implementation supports `UIView` hierarchies, but this is easily extensible to support any kind of UI framework (e.g. CoreAnimation or SpriteKit)
 
 ### Requirements
@@ -74,10 +74,42 @@ The `present` function shows the UI hierarchy for your application's key window,
 
 ### Controls
 
+#### Focusing on an Element
+
+To focus on the subhierarchy of a particular element, **long press on the element** to bring up the action menu and tap "Focus". The "Log Description" action will log the description of the element to the console, so that if you're attached to Xcode you can copy the address of the object for further debugging.
+
+<p align="center">
+<img alt="Focusing on an Element" src="images/focus.gif" width="700">
+</p>
+
 #### Adjusting Distance Between Levels
 
 The slider on the bottom left of the snapshot view can be used to adjust the spacing between levels of the hierarchy:
 
 <p align="center">
-<img alt="InAppViewDebugger" src="images/distance.gif" width="700">
+<img alt="Adjusting Distance Between Levels" src="images/distance.gif" width="700">
+</p>
+
+#### Adjusting Visible Levels
+
+The range slider on the bottom right of the snapshot view can be used to adjust the range of levels in the hierarchy that are visible:
+
+<p align="center">
+<img alt="Adjusting Visible Levels" src="images/slicing.gif" width="700">
+</p>
+
+#### Showing/Hiding Headers
+
+Each UI element has a header above it that shows its class name. These headers can be hidden or shown by **long pressing on an empty area of the snapshot view** to bring up the action menu:
+
+<p align="center">
+<img alt="Showing/Hiding Headers" src="images/headers.gif" width="700">
+</p>
+
+#### Showing/Hiding Borders
+
+Similarly to the headers, the borders drawn around each element can also be shown or hidden:
+
+<p align="center">
+<img alt="Showing/Hiding Borders" src="images/borders.gif" width="700">
 </p>
