@@ -43,11 +43,6 @@ final class SnapshotViewController: UIViewController, SnapshotViewDelegate, Snap
         self.view = snapshotView
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if isMovingFromParent {
