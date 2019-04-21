@@ -10,32 +10,33 @@ import CoreGraphics
 
 /// Provides identifying information for an element that is displayed in the
 /// view debugger.
-public struct ElementLabel {
+@objc(IAVDElementLabel) public final class ElementLabel: NSObject {
     /// Classification for an element that determines how it is represented
     /// in the view debugger.
     ///
     /// - normal: An element of normal importance.
     /// - important: An element of higher importance that is highlighted.
-    public enum Classification {
+    @objc(IAVDElementClassification) public enum Classification: Int {
         case normal
         case important
     }
     
-    public let name: String?
-    public let classification: Classification
+    @objc public let name: String?
+    @objc public let classification: Classification
     
-    public init(name: String?, classification: Classification = .normal) {
+    @objc public init(name: String?, classification: Classification = .normal) {
         self.name = name
         self.classification = classification
     }
 }
 
 /// A UI element that can be snapshotted.
-public protocol Element: CustomStringConvertible {
+@objc(IAVDElement) public protocol Element {
     var label: ElementLabel { get }
     var shortDescription: String { get }
+    var description: String { get }
     var frame: CGRect { get }
     var isHidden: Bool { get }
     var snapshotImage: CGImage? { get }
-    var children: AnySequence<Element> { get }
+    var children: [Element] { get }
 }

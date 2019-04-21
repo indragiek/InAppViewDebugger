@@ -35,7 +35,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             if shouldIgnoreMaxDepth != oldValue {
                 dataSource = TreeTableViewDataSource(
                     tree: snapshot,
-                    maxDepth: shouldIgnoreMaxDepth ? nil : configuration.maxDepth,
+                    maxDepth: shouldIgnoreMaxDepth ? nil : configuration.maxDepth?.intValue,
                     cellFactory: cellFactory(shouldIgnoreMaxDepth: shouldIgnoreMaxDepth)
                 )
             }
@@ -55,7 +55,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
         
         self.dataSource = TreeTableViewDataSource(
             tree: snapshot,
-            maxDepth: configuration.maxDepth,
+            maxDepth: configuration.maxDepth?.intValue,
             cellFactory: cellFactory(shouldIgnoreMaxDepth: false)
         )
     }
@@ -225,7 +225,7 @@ class HierarchyTableViewController: UITableViewController, HierarchyTableViewCel
             cell.lineView.lineColors = self.configuration.lineColors
             cell.lineView.lineWidth = self.configuration.lineWidth
             cell.lineView.lineSpacing = self.configuration.lineSpacing
-            cell.showSubtreeButton = !shouldIgnoreMaxDepth && !value.children.isEmpty && depth >= (self.configuration.maxDepth ?? Int.max)
+            cell.showSubtreeButton = !shouldIgnoreMaxDepth && !value.children.isEmpty && depth >= (self.configuration.maxDepth?.intValue ?? Int.max)
             cell.indexPath = indexPath
             cell.delegate = self
             return cell

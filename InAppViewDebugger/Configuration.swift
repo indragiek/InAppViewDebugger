@@ -9,12 +9,10 @@
 import Foundation
 
 /// Configuration options for the in app view debugger.
-@objc public final class Configuration: NSObject {
+@objc(IAVDConfiguration) public final class Configuration: NSObject {
     /// Configuration for the 3D snapshot view.
-    public var snapshotViewConfiguration = SnapshotViewConfiguration()
+    @objc public var snapshotViewConfiguration = SnapshotViewConfiguration()
     
     /// Configuration for the hierarchy (tree) view.
-    public var hierarchyViewConfiguration = HierarchyViewConfiguration()
-    
-    public override init() {}
+    @objc public var hierarchyViewConfiguration = HierarchyViewConfiguration()
 }

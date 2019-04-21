@@ -9,7 +9,7 @@
 import UIKit
 
 /// An element that represents a UIView.
-public struct ViewElement: Element {
+@objc public final class ViewElement: NSObject, Element {
     public var label: ElementLabel {
         guard let view = view else {
             return ElementLabel(name: nil)
@@ -37,13 +37,11 @@ public struct ViewElement: Element {
         return snapshotView(view)
     }
 
-    public var children: AnySequence<Element> {
+    public var children: [Element] {
         guard let view = view else {
-            return AnySequence(EmptyCollection())
+            return []
         }
-        return AnySequence(view.subviews.lazy.map {
-            ViewElement(view: $0)
-        })
+        return view.subviews.map { ViewElement(view: $0) }
     }
     
     public var shortDescription: String {
@@ -54,7 +52,7 @@ public struct ViewElement: Element {
         return String(format: "%@: %p (%.1f, %.1f, %.1f, %.1f)", String(describing: type(of: view)), view, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
     }
     
-    public var description: String {
+    override public var description: String {
         guard let view = view else {
             return ""
         }

@@ -9,16 +9,16 @@
 import Foundation
 
 /// A snapshot of the UI element tree in its current state.
-@objc public final class Snapshot: NSObject {
-    public let identifier = UUID().uuidString
-    public let label: ElementLabel
-    public let frame: CGRect
-    public let isHidden: Bool
-    public let snapshotImage: CGImage?
-    public let children: [Snapshot]
-    public let element: Element
+@objc(IAVDSnapshot) public final class Snapshot: NSObject {
+    @objc public let identifier = UUID().uuidString
+    @objc public let label: ElementLabel
+    @objc public let frame: CGRect
+    @objc public let isHidden: Bool
+    @objc public let snapshotImage: CGImage?
+    @objc public let children: [Snapshot]
+    @objc public let element: Element
     
-    public init(element: Element) {
+    @objc public init(element: Element) {
         self.label = element.label
         self.frame = element.frame
         self.isHidden = element.isHidden
