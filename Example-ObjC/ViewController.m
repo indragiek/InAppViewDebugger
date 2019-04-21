@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import <InAppViewDebugger/InAppViewDebugger-Swift.h>
+
+@import InAppViewDebugger;
 
 @implementation ViewController
 

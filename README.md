@@ -44,8 +44,6 @@ github "indragiek/InAppViewDebugger" "1.0.0"
 
 ### Swift
 
-#### From code:
-
 ```swift
 import InAppViewDebugger
 
@@ -54,21 +52,24 @@ import InAppViewDebugger
 }
 ```
 
-#### From `lldb`:
-
-```
-(lldb) e -lswift -- import InAppViewDebugger
-(lldb) e -lswift -- InAppViewDebugger.present()
-```
-
 ### Objective-C
 
 ```objc
-#import <InAppViewDebugger/InAppViewDebugger-Swift.h>
+@import InAppViewDebugger;
+
+// alternative import (they're the same): 
+// #import <InAppViewDebugger/InAppViewDebugger-Swift.h>
 
 - (IBAction)showViewDebugger:(id)sender {
   [InAppViewDebugger present];
 }
+```
+
+### `lldb`
+
+```
+(lldb) expr -lswift -- import InAppViewDebugger
+(lldb) expr -lswift -- InAppViewDebugger.present()
 ```
 
 The `present` function shows the UI hierarchy for your application's key window, presented over the top view controller of the window's root view controller. There are several other methods available on `InAppViewDebugger` for presenting a view debugger for a given window, view, or view controller.
