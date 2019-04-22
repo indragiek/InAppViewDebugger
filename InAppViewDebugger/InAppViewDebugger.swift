@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Exposes APIs for presenting the view debugger.
 @objc public final class InAppViewDebugger: NSObject {
     /// Takes a snapshot of the application's key window and presents the debugger
     /// view controller from the root view controller.
