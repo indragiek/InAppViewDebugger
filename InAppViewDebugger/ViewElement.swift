@@ -61,6 +61,9 @@ import UIKit
     
     private weak var view: UIView?
     
+    /// Constructs a new `ViewElement`
+    ///
+    /// - Parameter view: The `UIView` to create the element for.
     @objc public init(view: UIView) {
         self.view = view
     }

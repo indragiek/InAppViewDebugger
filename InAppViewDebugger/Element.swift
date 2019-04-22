@@ -13,11 +13,11 @@ import CoreGraphics
 @objc(IAVDElementLabel) public final class ElementLabel: NSObject {
     /// Classification for an element that determines how it is represented
     /// in the view debugger.
-    ///
-    /// - normal: An element of normal importance.
-    /// - important: An element of higher importance that is highlighted.
     @objc(IAVDElementClassification) public enum Classification: Int {
+        /// An element of normal importance.
         case normal
+        
+        /// An element of higher importance that is highlighted
         case important
     }
     

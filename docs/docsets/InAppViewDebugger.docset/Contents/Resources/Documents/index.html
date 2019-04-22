@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           InAppViewDebugger Docs
         </a>
-         (95% documented)
+         (100% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -103,7 +103,7 @@
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
 
 <p align="center">
-<img alt="InAppViewDebugger" src="images/main.png" width="700">
+<img alt="InAppViewDebugger" src="docs/img/main.png" width="700">
 </p>
 
 <p><code><a href="Classes/InAppViewDebugger.html">InAppViewDebugger</a></code> is a library that implements a view debugger with a 3D snapshot view and a hierarchy view, similar to <a href="https://revealapp.com">Reveal</a> and <a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/ExaminingtheViewHierarchy.html">Xcode&rsquo;s own view debugger</a>. The key distinction is, as the project title suggests, that this can be embedded inside the app and used on-device to debug UI issues without needing to be tethered to a computer.</p>
@@ -112,7 +112,7 @@
 <ul>
 <li><strong>3D snapshot view implemented in SceneKit</strong>: Gesture controls for zooming, panning, and rotating.</li>
 <li><strong>Hierarchy (tree) view that synchronizes its selection with the 3D view</strong>: This is a feature I really wanted in Xcode, to be able to visually find a view and see where it is in the hierarchy view</li>
-<li><strong>Support for <a href="images/main.png">iPad</a> and <a href="images/iphone1.png">iPhone</a></strong>: Layouts are designed specifically for each form factor.</li>
+<li><strong>Support for <a href="docs/img/main.png">iPad</a> and <a href="docs/img/iphone1.png">iPhone</a></strong>: Layouts are designed specifically for each form factor.</li>
 <li><strong>Extensible:</strong> The base implementation supports <code>UIView</code> hierarchies, but this is easily extensible to support any kind of UI framework (e.g. CoreAnimation or SpriteKit)</li>
 </ul>
 <h2 id='requirements' class='heading'>Requirements</h2>
@@ -162,35 +162,35 @@
 <p>To focus on the subhierarchy of a particular element, <strong>long press on the element</strong> to bring up the action menu and tap <q>Focus</q>. The long press can be used both in the hierarchy view and the 3D snapshot view. The <q>Log Description</q> action will log the description of the element to the console, so that if you&rsquo;re attached to Xcode you can copy the address of the object for further debugging.</p>
 
 <p align="center">
-<img alt="Focusing on an Element" src="images/focus.gif" width="700">
+<img alt="Focusing on an Element" src="docs/img/focus.gif" width="700">
 </p>
 <h3 id='adjusting-distance-between-levels' class='heading'>Adjusting Distance Between Levels</h3>
 
 <p>The slider on the bottom left of the snapshot view can be used to adjust the spacing between levels of the hierarchy:</p>
 
 <p align="center">
-<img alt="Adjusting Distance Between Levels" src="images/distance.gif" width="700">
+<img alt="Adjusting Distance Between Levels" src="docs/img/distance.gif" width="700">
 </p>
 <h3 id='adjusting-visible-levels' class='heading'>Adjusting Visible Levels</h3>
 
 <p>The range slider on the bottom right of the snapshot view can be used to adjust the range of levels in the hierarchy that are visible:</p>
 
 <p align="center">
-<img alt="Adjusting Visible Levels" src="images/slicing.gif" width="700">
+<img alt="Adjusting Visible Levels" src="docs/img/slicing.gif" width="700">
 </p>
 <h3 id='showing-hiding-headers' class='heading'>Showing/Hiding Headers</h3>
 
 <p>Each UI element has a header above it that shows its class name. These headers can be hidden or shown by <strong>long pressing on an empty area of the snapshot view</strong> to bring up the action menu:</p>
 
 <p align="center">
-<img alt="Showing/Hiding Headers" src="images/headers.gif" width="700">
+<img alt="Showing/Hiding Headers" src="docs/img/headers.gif" width="700">
 </p>
 <h3 id='showing-hiding-borders' class='heading'>Showing/Hiding Borders</h3>
 
 <p>Similarly to the headers, the borders drawn around each element can also be shown or hidden:</p>
 
 <p align="center">
-<img alt="Showing/Hiding Borders" src="images/borders.gif" width="700">
+<img alt="Showing/Hiding Borders" src="docs/img/borders.gif" width="700">
 </p>
 <h2 id='customization' class='heading'>Customization</h2>
 
