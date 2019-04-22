@@ -1,0 +1,26 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/indragie/Desktop/InAppViewDebugger/InAppViewDebugger/Element.swift",
+      "line": 20,
+      "symbol": "ElementLabel.Classification.normal",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/indragie/Desktop/InAppViewDebugger/InAppViewDebugger/Element.swift",
+      "line": 21,
+      "symbol": "ElementLabel.Classification.important",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/indragie/Desktop/InAppViewDebugger/InAppViewDebugger/ViewElement.swift",
+      "line": 64,
+      "symbol": "ViewElement.init(view:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/indragie/Desktop/InAppViewDebugger"
+}

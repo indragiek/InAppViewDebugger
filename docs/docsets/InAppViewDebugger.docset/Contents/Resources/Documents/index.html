@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>InAppViewDebugger  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+
+    <a title="InAppViewDebugger  Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="index.html">
+          InAppViewDebugger Docs
+        </a>
+         (95% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/indragiek/InAppViewDebugger">
+            <img class="header-icon" src="img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="index.html">InAppViewDebugger Reference</a>
+      <img class="carat" src="img/carat.png" />
+      InAppViewDebugger  Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/Configuration.html">Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/ElementLabel.html">ElementLabel</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/ElementLabel/Classification.html">– Classification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/HierarchyViewConfiguration.html">HierarchyViewConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/InAppViewDebugger.html">InAppViewDebugger</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/Snapshot.html">Snapshot</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/SnapshotViewConfiguration.html">SnapshotViewConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/SnapshotViewConfiguration/HeaderAttributes.html">– HeaderAttributes</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/ViewElement.html">ViewElement</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/Element.html">Element</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            
+            <h1 id='inappviewdebugger' class='heading'>InAppViewDebugger</h1>
+
+<p><a href="LICENSE"><img src="https://img.shields.io/github/license/indragiek/InAppViewDebugger.svg" alt="License"></a>
+<a href="https://cocoapods.org/?q=InAppViewDebugger"><img src="https://img.shields.io/cocoapods/v/InAppViewDebugger.svg" alt="CocoaPods"></a>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
+
+<p align="center">
+<img alt="InAppViewDebugger" src="images/main.png" width="700">
+</p>
+
+<p><code><a href="Classes/InAppViewDebugger.html">InAppViewDebugger</a></code> is a library that implements a view debugger with a 3D snapshot view and a hierarchy view, similar to <a href="https://revealapp.com">Reveal</a> and <a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/ExaminingtheViewHierarchy.html">Xcode&rsquo;s own view debugger</a>. The key distinction is, as the project title suggests, that this can be embedded inside the app and used on-device to debug UI issues without needing to be tethered to a computer.</p>
+<h2 id='features' class='heading'>Features</h2>
+
+<ul>
+<li><strong>3D snapshot view implemented in SceneKit</strong>: Gesture controls for zooming, panning, and rotating.</li>
+<li><strong>Hierarchy (tree) view that synchronizes its selection with the 3D view</strong>: This is a feature I really wanted in Xcode, to be able to visually find a view and see where it is in the hierarchy view</li>
+<li><strong>Support for <a href="images/main.png">iPad</a> and <a href="images/iphone1.png">iPhone</a></strong>: Layouts are designed specifically for each form factor.</li>
+<li><strong>Extensible:</strong> The base implementation supports <code>UIView</code> hierarchies, but this is easily extensible to support any kind of UI framework (e.g. CoreAnimation or SpriteKit)</li>
+</ul>
+<h2 id='requirements' class='heading'>Requirements</h2>
+
+<ul>
+<li>iOS 11.0+</li>
+<li>Xcode 10.1+ (framework built for Swift 4.2)</li>
+</ul>
+<h2 id='installation' class='heading'>Installation</h2>
+<h3 id='cocoapods' class='heading'>CocoaPods</h3>
+
+<p>Add the following line to your <code>Podfile</code>:</p>
+<pre class="highlight plaintext"><code>pod 'InAppViewDebugger', '~&gt; 1.0.0'
+</code></pre>
+<h3 id='carthage' class='heading'>Carthage</h3>
+
+<p>Add the following line to your <code>Cartfile</code>:</p>
+<pre class="highlight plaintext"><code>github "indragiek/InAppViewDebugger" "1.0.0"
+</code></pre>
+<h2 id='usage' class='heading'>Usage</h2>
+<h3 id='swift' class='heading'>Swift</h3>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">InAppViewDebugger</span>
+
+<span class="kd">@IBAction</span> <span class="kd">func</span> <span class="nf">showViewDebugger</span><span class="p">(</span><span class="nv">sender</span><span class="p">:</span> <span class="kt">AnyObject</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">InAppViewDebugger</span><span class="o">.</span><span class="nf">present</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='objective-c' class='heading'>Objective-C</h3>
+<pre class="highlight objective_c"><code><span class="k">@import</span> <span class="n">InAppViewDebugger</span><span class="p">;</span>
+
+<span class="c1">// alternative import (they're the same): </span>
+<span class="c1">// #import &lt;InAppViewDebugger/InAppViewDebugger-Swift.h&gt;</span>
+
+<span class="k">-</span> <span class="p">(</span><span class="n">IBAction</span><span class="p">)</span><span class="nf">showViewDebugger</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+  <span class="p">[</span><span class="n">InAppViewDebugger</span> <span class="nf">present</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='code-lldb-code' class='heading'><code>lldb</code></h3>
+<pre class="highlight plaintext"><code>(lldb) expr -lswift -- import InAppViewDebugger
+(lldb) expr -lswift -- InAppViewDebugger.present()
+</code></pre>
+
+<p>The <code>present</code> function shows the UI hierarchy for your application&rsquo;s key window, presented over the top view controller of the window&rsquo;s root view controller. There are several other methods available on <code><a href="Classes/InAppViewDebugger.html">InAppViewDebugger</a></code> for presenting a view debugger for a given window, view, or view controller.</p>
+<h2 id='controls' class='heading'>Controls</h2>
+<h3 id='focusing-on-an-element' class='heading'>Focusing on an Element</h3>
+
+<p>To focus on the subhierarchy of a particular element, <strong>long press on the element</strong> to bring up the action menu and tap <q>Focus</q>. The long press can be used both in the hierarchy view and the 3D snapshot view. The <q>Log Description</q> action will log the description of the element to the console, so that if you&rsquo;re attached to Xcode you can copy the address of the object for further debugging.</p>
+
+<p align="center">
+<img alt="Focusing on an Element" src="images/focus.gif" width="700">
+</p>
+<h3 id='adjusting-distance-between-levels' class='heading'>Adjusting Distance Between Levels</h3>
+
+<p>The slider on the bottom left of the snapshot view can be used to adjust the spacing between levels of the hierarchy:</p>
+
+<p align="center">
+<img alt="Adjusting Distance Between Levels" src="images/distance.gif" width="700">
+</p>
+<h3 id='adjusting-visible-levels' class='heading'>Adjusting Visible Levels</h3>
+
+<p>The range slider on the bottom right of the snapshot view can be used to adjust the range of levels in the hierarchy that are visible:</p>
+
+<p align="center">
+<img alt="Adjusting Visible Levels" src="images/slicing.gif" width="700">
+</p>
+<h3 id='showing-hiding-headers' class='heading'>Showing/Hiding Headers</h3>
+
+<p>Each UI element has a header above it that shows its class name. These headers can be hidden or shown by <strong>long pressing on an empty area of the snapshot view</strong> to bring up the action menu:</p>
+
+<p align="center">
+<img alt="Showing/Hiding Headers" src="images/headers.gif" width="700">
+</p>
+<h3 id='showing-hiding-borders' class='heading'>Showing/Hiding Borders</h3>
+
+<p>Similarly to the headers, the borders drawn around each element can also be shown or hidden:</p>
+
+<p align="center">
+<img alt="Showing/Hiding Borders" src="images/borders.gif" width="700">
+</p>
+<h2 id='customization' class='heading'>Customization</h2>
+
+<p>Colors, fonts, and other attributes for both the snapshot view and the hierarchy view can be changed by creating a custom <a href="blob/master/InAppViewDebugger/Configuration.swift"><code><a href="Classes/Configuration.html">Configuration</a></code></a>. The configuration is then passed to a function like <code>InAppViewDebugger.presentForWindow(:configuration:completion:)</code>.</p>
+<h2 id='extending-for-other-ui-frameworks' class='heading'>Extending for Other UI Frameworks</h2>
+
+<p>The current implementation only supports <code>UIView</code> hierarchies, but this can easily be extended to support other UI frameworks by conforming to the <a href="blob/master/InAppViewDebugger/Element.swift"><code><a href="Protocols/Element.html">Element</a></code></a> protocol. See <a href="blob/master/InAppViewDebugger/ViewElement.swift"><code><a href="Classes/ViewElement.html">ViewElement</a></code></a> to see what an example implementation looks like — by providing a the frame, a snapshot image, and a few other pieces of information, all of the features described above will work for your own framework.</p>
+
+<p>A <a href="blob/master/InAppViewDebugger/Snapshot.swift"><code><a href="Classes/Snapshot.html">Snapshot</a></code></a> instance represents a recursive snapshot of the <em>current state</em> of a UI element hierarchy, and is constructed using an <code><a href="Protocols/Element.html">Element</a></code>. The snapshot can then be passed to <code>InAppViewDebugger.presentWithSnapshot(:rootViewController:configuration:completion:</code> to show the view debugger.</p>
+<h2 id='credits' class='heading'>Credits</h2>
+
+<ul>
+<li><a href="https://twitter.com/kyleve">Kyle Van Essen</a> for <a href="https://twitter.com/kyleve/status/1111689823759171585">this tweet</a> picturing Square&rsquo;s implementation that inspired me to build this</li>
+<li><a href="https://github.com/AudioKit/AudioKitSynthOne">AudioKit SynthOne</a>, an amazing open-source audio synthesizer app for the iPad that made for a great demo as pictured above</li>
+</ul>
+<h2 id='contact' class='heading'>Contact</h2>
+
+<ul>
+<li>Indragie Karunaratne</li>
+<li><a href="http://twitter.com/indragie">@indragie</a></li>
+<li><a href="http://indragie.com">http://indragie.com</a></li>
+</ul>
+<h2 id='license' class='heading'>License</h2>
+
+<p><code><a href="Classes/InAppViewDebugger.html">InAppViewDebugger</a></code> is licensed under the MIT License. See <code>LICENSE</code> for more information.</p>
+
+          </div>
+        </section>
+
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2019 <a class="link" href="http://indragie.com" target="_blank" rel="external">Indragie Karunaratne</a>. All rights reserved. (Last updated: 2019-04-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
