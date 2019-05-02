@@ -80,7 +80,7 @@ import UIKit
         }
         let debuggerViewController = ViewDebuggerViewController(snapshot: snapshot, configuration: configuration ?? Configuration())
         let navigationController = UINavigationController(rootViewController: debuggerViewController)
-        topViewController(rootViewController: rootViewController)?.present(navigationController, animated: true, completion: nil)
+        topViewController(rootViewController: rootViewController)?.present(navigationController, animated: true, completion: completion)
     }
     
     @available(*, unavailable)
