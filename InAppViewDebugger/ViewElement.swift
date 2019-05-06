@@ -23,7 +23,8 @@ import UIKit
     }
     
     public var frame: CGRect {
-        return view?.frame ?? .zero
+        let offset = contentOffsetForView(view)
+        return view?.frame.offsetBy(dx: offset.x, dy: offset.y) ?? .zero
     }
     
     public var isHidden: Bool {
@@ -154,4 +155,10 @@ fileprivate func snapshotView(_ view: UIView) -> CGImage? {
         subview.isHidden = isHidden
     }
     return image
+}
+
+fileprivate func contentOffsetForView(_ view: UIView?) -> CGPoint {
+    guard let scrollView = view?.superview as? UIScrollView else { return .zero }
+    let contentOffset = scrollView.contentOffset
+    return CGPoint(x: -contentOffset.x, y: -contentOffset.y)
 }
