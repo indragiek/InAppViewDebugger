@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 /// A snapshot of the UI element tree in its current state.
 @objc(IAVDSnapshot) public final class Snapshot: NSObject {
