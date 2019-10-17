@@ -6,6 +6,7 @@
 //  Copyright © 2019 Indragie Karunaratne. All rights reserved.
 //
 
+import Foundation
 import CoreGraphics
 
 /// Provides identifying information for an element that is displayed in the

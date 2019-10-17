@@ -6,7 +6,8 @@
 //  Copyright © 2019 Indragie Karunaratne. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import CoreGraphics
 
 /// A view that draws one or more parallel vertical lines.
 final class ParallelLineView: UIView {
