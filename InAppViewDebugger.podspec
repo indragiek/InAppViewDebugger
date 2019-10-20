@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name               = "InAppViewDebugger"
-  spec.version            = "1.0.1"
+  spec.version            = "1.0.2"
   spec.summary            = "A UIView debugger (like Reveal or Xcode) that can be embedded in an app for on-device view debugging."
   spec.homepage           = "https://github.com/indragiek/InAppViewDebugger"
   spec.screenshots        = "https://raw.githubusercontent.com/indragiek/InAppViewDebugger/master/docs/img/main.png"

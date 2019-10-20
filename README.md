@@ -29,7 +29,7 @@
 Add the following line to your `Podfile`:
 
 ```ruby
-pod 'InAppViewDebugger', '~> 1.0.1'
+pod 'InAppViewDebugger', '~> 1.0.2'
 ```
 
 ### Carthage
@@ -37,7 +37,7 @@ pod 'InAppViewDebugger', '~> 1.0.1'
 Add the following line to your `Cartfile`:
 
 ```
-github "indragiek/InAppViewDebugger" "1.0.1"
+github "indragiek/InAppViewDebugger" "1.0.2"
 ```
 
 ## Usage
@@ -57,7 +57,7 @@ import InAppViewDebugger
 ```objc
 @import InAppViewDebugger;
 
-// alternative import (they're the same): 
+// alternative import (they're the same):
 // #import <InAppViewDebugger/InAppViewDebugger-Swift.h>
 
 - (IBAction)showViewDebugger:(id)sender {
@@ -126,7 +126,7 @@ The current implementation only supports `UIView` hierarchies, but this can easi
 
 A [`Snapshot`](blob/master/InAppViewDebugger/Snapshot.swift) instance represents a recursive snapshot of the *current state* of a UI element hierarchy, and is constructed using an `Element`. The snapshot can then be passed to
 ```swift
-InAppViewDebugger.presentWithSnapshot(:rootViewController:configuration:completion: 
+InAppViewDebugger.presentWithSnapshot(:rootViewController:configuration:completion:
 ```
 to show the view debugger.
 
@@ -144,4 +144,3 @@ to show the view debugger.
 ## License
 
 `InAppViewDebugger` is licensed under the MIT License. See `LICENSE` for more information.
-
