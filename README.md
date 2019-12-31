@@ -118,15 +118,15 @@ Similarly to the headers, the borders drawn around each element can also be show
 
 ## Customization
 
-Colors, fonts, and other attributes for both the snapshot view and the hierarchy view can be changed by creating a custom [`Configuration`](blob/master/InAppViewDebugger/Configuration.swift). The configuration is then passed to a function like `InAppViewDebugger.presentForWindow(:configuration:completion:)`.
+Colors, fonts, and other attributes for both the snapshot view and the hierarchy view can be changed by creating a custom [`Configuration`](InAppViewDebugger/Configuration.swift). The configuration is then passed to a function like `InAppViewDebugger.presentForWindow(:configuration:completion:)`.
 
 ## Extending for Other UI Frameworks
 
-The current implementation only supports `UIView` hierarchies, but this can easily be extended to support other UI frameworks by conforming to the [`Element`](blob/master/InAppViewDebugger/Element.swift) protocol. See [`ViewElement`](blob/master/InAppViewDebugger/ViewElement.swift) to see what an example implementation looks like — by providing a the frame, a snapshot image, and a few other pieces of information, all of the features described above will work for your own framework.
+The current implementation only supports `UIView` hierarchies, but this can easily be extended to support other UI frameworks by conforming to the [`Element`](InAppViewDebugger/Element.swift) protocol. See [`ViewElement`](InAppViewDebugger/ViewElement.swift) to see what an example implementation looks like — by providing a the frame, a snapshot image, and a few other pieces of information, all of the features described above will work for your own framework.
 
-A [`Snapshot`](blob/master/InAppViewDebugger/Snapshot.swift) instance represents a recursive snapshot of the *current state* of a UI element hierarchy, and is constructed using an `Element`. The snapshot can then be passed to
+A [`Snapshot`](InAppViewDebugger/Snapshot.swift) instance represents a recursive snapshot of the *current state* of a UI element hierarchy, and is constructed using an `Element`. The snapshot can then be passed to
 ```swift
-InAppViewDebugger.presentWithSnapshot(:rootViewController:configuration:completion:
+InAppViewDebugger.presentWithSnapshot(:rootViewController:configuration:completion:)
 ```
 to show the view debugger.
 
