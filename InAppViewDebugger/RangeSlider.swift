@@ -184,6 +184,12 @@ final class RangeSlider: UIControl {
         isTrackingRightHandle = false
     }
     
+    // MARK: UIGestureRecognizerDelegate
+    
+    override func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        return false
+    }
+    
     // MARK: Private
     
     private func valueAtX(_ x: CGFloat) -> Float {
