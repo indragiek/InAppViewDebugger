@@ -29,7 +29,7 @@
 Add the following line to your `Podfile`:
 
 ```ruby
-pod 'InAppViewDebugger', '~> 1.0.2'
+pod 'InAppViewDebugger', '~> 1.0.3'
 ```
 
 ### Carthage
@@ -37,7 +37,7 @@ pod 'InAppViewDebugger', '~> 1.0.2'
 Add the following line to your `Cartfile`:
 
 ```
-github "indragiek/InAppViewDebugger" "1.0.2"
+github "indragiek/InAppViewDebugger" "1.0.3"
 ```
 
 ## Usage
