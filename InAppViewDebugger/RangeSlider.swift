@@ -215,7 +215,10 @@ final class RangeSlider: UIControl {
 }
 
 private func imageNamed(_ name: String) -> UIImage? {
-    return UIImage(named: name, in: Bundle(for: RangeSlider.self), compatibleWith: nil)
+    let bundle = Bundle(for: RangeSlider.self, in: "InAppViewDebugger_InAppViewDebugger")
+    let image = UIImage(named: name, in: bundle, compatibleWith: nil)
+    assert(image != nil)
+    return image
 }
 
 private func trackImage() -> UIImage? {
