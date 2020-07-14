@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "InAppViewDebugger",
     platforms: [
-        .iOS(.v13),
-        .watchOS(.v6)
+        .iOS(.v14),
+        .watchOS(.v7)
     ],
     products: [
         .library(
