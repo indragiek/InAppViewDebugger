@@ -78,11 +78,11 @@ fileprivate func getViewController(view: UIView) -> UIViewController? {
 }
 
 fileprivate func drawView(_ view: UIView) -> CGImage? {
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
-    view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
-    let image = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    return image?.cgImage
+    let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
+    let image = renderer.image { context in
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+    }
+    return image.cgImage
 }
 
 fileprivate func hideViewsOnTopOf(view: UIView, root: UIView, hiddenViews: inout [UIView]) -> Bool {
